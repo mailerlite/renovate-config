@@ -1,0 +1,19 @@
+{
+    "semanticCommits": "enabled",
+    "dependencyDashboard": true,
+    "suppressNotifications": ["prIgnoreNotification"],
+    "rebaseWhen": "conflicted",
+    "labels": ["renovate"],
+    "dockerfile":{
+        "fileMatch":[
+            "^Makefile$"
+        ]
+    },
+    "helm-values":{
+        "fileMatch":[
+            "clusters/.+/helm-release\\.yaml$",
+            "base/.+/helm-release\\.yaml$",
+            "components/.+/helm-release\\.yaml$"
+        ]
+    }
+}

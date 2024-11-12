@@ -1,0 +1,88 @@
+{
+    "extends":[
+        "github>mailergroup/renovate-config:base"
+    ],
+    "enabledManagers":[
+        "regex",
+        "github-actions",
+        "kubernetes",
+        "flux"
+    ],
+    "flux": {
+        "fileMatch": [
+            "mailer.+\\.ya?ml$",
+            "clusters/.+\\.ya?ml$",
+            "base/.+\\.ya?ml$"
+        ]
+    },
+    "regexManagers":[
+        {
+            "fileMatch":[
+                "mailer.+\\.yaml$",
+                "clusters/.+\\.yaml$",
+                "base/.+\\.yaml$"
+            ],
+            "matchStrings":[
+                "registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)"
+            ],
+            "datasourceTemplate":"helm"
+        },
+        {
+            "fileMatch":[
+                "mailer.+\\.yaml$",
+                "clusters/.+\\.yaml$",
+                "base/.+\\.yaml$"
+            ],
+            "matchStrings":[
+                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?(?:\n.*?)(?:\n.*?)?tag: .*?(?<currentValue>.*)"
+            ],
+            "datasourceTemplate":"docker"
+        },
+        {
+            "fileMatch":[
+                "mailer.+\\.yaml$",
+                "clusters/.+\\.yaml$",
+                "base/.+\\.yaml$"
+            ],
+            "matchStrings":[
+                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?image: .*?:(?<currentValue>.*)"
+            ],
+            "datasourceTemplate":"docker"
+        },
+        {
+            "fileMatch":[
+                "^.pre-commit-config.yaml$"
+            ],
+            "matchStrings":[
+                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?rev: .*?(?<currentValue>.*)"
+            ],
+            "datasourceTemplate":"github-releases"
+        }
+    ],
+    "packageRules":[
+        {
+            "matchDatasources":[
+                "helm"
+            ],
+            "separateMinorPatch":true,
+            "ignoreDeprecated":true,
+            "additionalBranchPrefix":"{{baseDir}}-",
+            "addLabels":["helm", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"]
+        },
+        {
+            "matchDatasources":[
+                "docker"
+            ],
+            "separateMinorPatch":true,
+            "ignoreDeprecated":true,
+            "additionalBranchPrefix":"{{baseDir}}-",
+            "addLabels":["docker", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"]
+        },
+        {
+            "matchPackagePatterns":[
+                "^victoriametrics"
+            ],
+            "additionalBranchPrefix":"{{baseDir}}-"
+        }
+    ]
+}

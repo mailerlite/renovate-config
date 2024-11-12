@@ -1,0 +1,90 @@
+{
+    "extends":[
+        "github>mailergroup/renovate-config:base"
+    ],
+    "enabledManagers":[
+        "regex",
+        "docker-compose",
+        "helmv3",
+        "github-actions"
+    ],
+    "regexManagers":[
+        {
+            "fileMatch":["(^|\/|.)Dockerfile$"],
+            "matchStrings":[
+                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( extractVersion=(?<extractVersion>.+?))?( versioning=(?<versioning>.*?))?\n.*?_VERSION=[\"]?(?<currentValue>.*[^\"\\n])"
+            ],
+            "versioningTemplate":"{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+        },
+        {
+            "fileMatch":["^Makefile$"],
+            "matchStrings":[
+                "OCTOPUS_IMAGE := (?:.*?\/mailergroup\/)(?<depName>.*?):(?<currentValue>.*?[a-f0-9].*)"
+            ],
+            "datasourceTemplate":"docker"
+        },
+        {
+            "fileMatch":["(^|\/|.)Dockerfile$"],
+            "matchStrings":[
+                "FROM (?:.*?\/mailergroup\/)(?<depName>[a-z0-9.\/-]+)(?::(?<currentValue>[a-z0-9.-]+))?"
+            ],
+            "datasourceTemplate":"docker"
+        },
+        {
+            "fileMatch":["(?:helm|helmchart)/values.(?:dev|prod|staging|production).(?:yaml|yml)"],
+            "matchStrings":[
+                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?image: .*?:(?<currentValue>.*)"
+            ],
+            "versioningTemplate":"{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+        }
+    ],
+    "packageRules":[
+        {
+            "matchPackagePatterns":[
+                "octopus",
+                "swiss-army-knife"
+            ],
+            "registryUrls":["https://europe-docker.pkg.dev/mailergroup/"]
+        },
+        {
+            "matchPackagePatterns":["europe-docker.pkg.dev/mailerlite-v2/landings/landings"],
+            "registryUrls":["https://europe-docker.pkg.dev/mailerlite-v2/"]
+        },
+        {
+            "matchPackagePatterns":["europe-docker.pkg.dev/mailergroup/groot/groot"],
+            "registryUrls":["https://europe-docker.pkg.dev/mailergroup/"]
+        },
+        {
+            "matchDatasources":["docker"],
+            "addLabels":["docker"],
+            "reviewers":["team:sre"]
+        },
+        {
+            "matchDatasources":["github-actions"],
+            "addLabels":["github"],
+            "reviewers":["team:sre"]
+        },
+        {
+            "matchPackagePatterns":["elasticsearch"],
+            "matchUpdateTypes":["patch","minor"]
+        },
+        {
+            "matchPackagePatterns":["elasticsearch"],
+            "matchUpdateTypes":["major"],
+            "enabled":false
+        },
+        {
+            "matchPackagePatterns":["groot"],
+            "addLabels":["groot"]
+        },
+        {
+            "matchDatasources":["helm"],
+            "addLabels":["helm"],
+            "reviewers":["team:sre"]
+        },
+        {
+            "matchDatasources":["github-releases"],
+            "reviewers":["team:sre"]
+        }
+    ]
+}
