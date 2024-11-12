@@ -1,6 +1,6 @@
 {
     "extends":[
-        "github>mailergroup/renovate-config:base"
+        "github>mailerlite/renovate-config:base"
     ],
     "enabledManagers":[
         "regex",

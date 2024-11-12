@@ -7,6 +7,6 @@ Collection of renovate configs that we use
 Flux Cluster:
 ```json
 {
-  "extends": ["github>mailergroup/renovate-config:flux"]
+  "extends": ["github>mailerlite/renovate-config:flux"]
 }
 ```
