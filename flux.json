@@ -34,6 +34,17 @@
                 "base/.+\\.yaml$"
             ],
             "matchStrings":[
+                "registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)"
+            ],
+            "datasourceTemplate":"docker"
+        },
+        {
+            "fileMatch":[
+                "mailer.+\\.yaml$",
+                "clusters/.+\\.yaml$",
+                "base/.+\\.yaml$"
+            ],
+            "matchStrings":[
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?(?:\n.*?)(?:\n.*?)?tag: .*?(?<currentValue>.*)"
             ],
             "datasourceTemplate":"docker"
