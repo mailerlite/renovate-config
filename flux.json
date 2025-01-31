@@ -34,7 +34,7 @@
                 "base/.+\\.yaml$"
             ],
             "matchStrings":[
-                "registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)"
+                "# renovate: datasource=(?<datasource>.*?) registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)"
             ],
             "datasourceTemplate":"docker"
         },
