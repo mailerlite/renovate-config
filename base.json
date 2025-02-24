@@ -4,6 +4,7 @@
     "suppressNotifications": ["prIgnoreNotification"],
     "rebaseWhen": "conflicted",
     "labels": ["renovate"],
+    "onboardingConfigFileName": ".github/renovate.json",
     "dockerfile":{
         "fileMatch":[
             "^Makefile$"

@@ -23,9 +23,9 @@
                 "base/.+\\.yaml$"
             ],
             "matchStrings":[
-                "registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)"
+                "# renovate: datasource=(?<datasource>.*?) registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)"
             ],
-            "datasourceTemplate":"helm"
+            "datasourceTemplate":"docker"
         },
         {
             "fileMatch":[
@@ -34,9 +34,9 @@
                 "base/.+\\.yaml$"
             ],
             "matchStrings":[
-                "# renovate: datasource=(?<datasource>.*?) registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)"
+                "registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)"
             ],
-            "datasourceTemplate":"docker"
+            "datasourceTemplate":"helm"
         },
         {
             "fileMatch":[
