@@ -82,7 +82,7 @@
             ],
             "separateMinorPatch":true,
             "ignoreDeprecated":true,
-            "additionalBranchPrefix":"{{baseDir}}-",
+            "additionalBranchPrefix":"{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
             "addLabels":["helm", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"]
         },
         {
@@ -91,14 +91,14 @@
             ],
             "separateMinorPatch":true,
             "ignoreDeprecated":true,
-            "additionalBranchPrefix":"{{baseDir}}-",
+            "additionalBranchPrefix":"{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
             "addLabels":["docker", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"]
         },
         {
             "matchPackagePatterns":[
                 "^victoriametrics"
             ],
-            "additionalBranchPrefix":"{{baseDir}}-"
+            "additionalBranchPrefix":"{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
         },
         {
             "groupName": "app-template patch dependencies",
