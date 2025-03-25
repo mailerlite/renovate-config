@@ -94,6 +94,17 @@
                 "^victoriametrics"
             ],
             "additionalBranchPrefix":"{{baseDir}}-"
-        }
+        },
+        {
+            "groupName": "app-template non-major dependencies",
+            "groupSlug": "app-template-minor-patch",
+            "matchPackageNames": [
+              "app-template"
+            ],
+            "matchUpdateTypes": [
+              "minor",
+              "patch"
+            ]
+          }
     ]
 }
