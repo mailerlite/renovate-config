@@ -82,6 +82,7 @@
             ],
             "separateMinorPatch":true,
             "ignoreDeprecated":true,
+            "additionalBranchPrefix":"{{baseDir}}-",
             "addLabels":["helm", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"]
         },
         {
@@ -90,12 +91,14 @@
             ],
             "separateMinorPatch":true,
             "ignoreDeprecated":true,
+            "additionalBranchPrefix":"{{baseDir}}-",
             "addLabels":["docker", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"]
         },
         {
             "matchPackagePatterns":[
                 "^victoriametrics"
-            ]
+            ],
+            "additionalBranchPrefix":"{{baseDir}}-"
         },
         {
             "groupName": "app-template patch dependencies",
