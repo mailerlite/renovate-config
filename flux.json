@@ -98,7 +98,7 @@
             "matchPackagePatterns":[
                 "^victoriametrics"
             ],
-            "additionalBranchPrefix":"{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
+            "additionalBranchPrefix":"{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-"
         },
         {
             "groupName": "app-template patch dependencies",
