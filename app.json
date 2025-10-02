@@ -86,7 +86,8 @@
             "automerge": true,
             "automergeType": "pr",
             "addLabels":["groot", "automerge"],
-            "schedule": ["every 1 hour"]
+            "schedule": ["every 1 hour"],
+            "prPriority": -1
         },
         {
             "matchDatasources":["helm"],
