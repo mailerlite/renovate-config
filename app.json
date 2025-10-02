@@ -61,12 +61,14 @@
         {
             "matchDatasources":["docker"],
             "addLabels":["docker"],
-            "reviewers":["team:sre"]
+            "reviewers":["team:sre"],
+            "schedule": ["before 2am", "after 11pm"]
         },
         {
             "matchDatasources":["github-actions"],
             "addLabels":["github"],
-            "reviewers":["team:sre"]
+            "reviewers":["team:sre"],
+            "schedule": ["before 3am", "after 10pm"]
         },
         {
             "matchPackagePatterns":["elasticsearch"],
@@ -92,11 +94,13 @@
         {
             "matchDatasources":["helm"],
             "addLabels":["helm"],
-            "reviewers":["team:sre"]
+            "reviewers":["team:sre"],
+            "schedule": ["before 4am", "after 9pm"]
         },
         {
             "matchDatasources":["github-releases"],
-            "reviewers":["team:sre"]
+            "reviewers":["team:sre"],
+            "schedule": ["before 5am", "after 8pm"]
         }
     ]
 }
