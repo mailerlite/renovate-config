@@ -8,7 +8,7 @@
     "prConcurrentLimit": 2,
     "prHourlyLimit": 4,
     "schedule": ["before 6am", "after 10pm"],
-    "timezone": "Europe/Vilnius",
+    "timezone": "UTC",
     "dockerfile":{
         "fileMatch":[
             "^Makefile$"
