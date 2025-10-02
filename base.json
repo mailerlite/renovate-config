@@ -5,6 +5,10 @@
     "rebaseWhen": "conflicted",
     "labels": ["renovate"],
     "onboardingConfigFileName": ".github/renovate.json",
+    "prConcurrentLimit": 2,
+    "prHourlyLimit": 4,
+    "schedule": ["before 6am", "after 10pm"],
+    "timezone": "UTC",
     "dockerfile":{
         "fileMatch":[
             "^Makefile$"
