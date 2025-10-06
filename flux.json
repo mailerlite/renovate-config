@@ -11,7 +11,7 @@
     "flux": {
         "fileMatch": [
             "mailer.+\\.ya?ml$",
-            "clusters/.+\\.ya?ml$",
+            "clusters?/.+\\.ya?ml$",
             "base/.+\\.ya?ml$"
         ]
     },
@@ -20,7 +20,7 @@
             "customType": "regex",
             "fileMatch":[
                 "mailer.+\\.yaml$",
-                "clusters/.+\\.yaml$",
+                "clusters?/.+\\.yaml$",
                 "base/.+\\.yaml$"
             ],
             "matchStrings":[
@@ -32,7 +32,7 @@
             "customType": "regex",
             "fileMatch":[
                 "mailer.+\\.yaml$",
-                "clusters/.+\\.yaml$",
+                "clusters?/.+\\.yaml$",
                 "base/.+\\.yaml$"
             ],
             "matchStrings":[
@@ -44,7 +44,7 @@
             "customType": "regex",
             "fileMatch":[
                 "mailer.+\\.yaml$",
-                "clusters/.+\\.yaml$",
+                "clusters?/.+\\.yaml$",
                 "base/.+\\.yaml$"
             ],
             "matchStrings":[
@@ -56,7 +56,7 @@
             "customType": "regex",
             "fileMatch":[
                 "mailer.+\\.yaml$",
-                "clusters/.+\\.yaml$",
+                "clusters?/.+\\.yaml$",
                 "base/.+\\.yaml$"
             ],
             "matchStrings":[
