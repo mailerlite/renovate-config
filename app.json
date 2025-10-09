@@ -59,6 +59,14 @@
             "registryUrls":["https://europe-docker.pkg.dev/mailerlitehub/"]
         },
         {
+            "matchPackageNames":["europe-docker.pkg.dev/mailerlitehub/groot/groot"],
+            "automerge": true,
+            "automergeType": "pr",
+            "addLabels":["groot", "automerge"],
+            "schedule": ["every 1 hour"],
+            "prPriority": -1
+        },
+        {
             "matchDatasources":["docker"],
             "addLabels":["docker"],
             "reviewers":["team:sre"],
@@ -82,14 +90,6 @@
         {
             "matchPackagePatterns":["groot"],
             "addLabels":["groot"]
-        },
-        {
-            "matchPackageNames":["europe-docker.pkg.dev/mailerlitehub/groot/groot"],
-            "automerge": true,
-            "automergeType": "pr",
-            "addLabels":["groot", "automerge"],
-            "schedule": ["every 1 hour"],
-            "prPriority": -1
         },
         {
             "matchDatasources":["helm"],
