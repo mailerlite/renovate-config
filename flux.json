@@ -77,6 +77,14 @@
     ],
     "packageRules":[
         {
+            "matchPackageNames":["europe-docker.pkg.dev/mailerlitehub/groot/groot"],
+            "automerge": true,
+            "automergeType": "pr",
+            "addLabels":["groot", "automerge"],
+            "schedule": ["every 1 hour"],
+            "prPriority": -1
+        },
+        {
             "matchDatasources":[
                 "helm"
             ],
