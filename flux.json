@@ -79,7 +79,7 @@
         {
             "matchPackageNames":["europe-docker.pkg.dev/mailerlitehub/groot/groot"],
             "automerge": true,
-            "automergeType": "branch",
+            "automergeType": "pr",
             "platformAutomerge": true,
             "addLabels":["groot", "automerge"],
             "schedule": ["every 1 hour"],
