@@ -83,7 +83,7 @@
             "platformAutomerge": true,
             "addLabels":["groot", "automerge"],
             "schedule": ["every 1 hour"],
-            "prPriority": -1
+            "prPriority": 100
         },
         {
             "matchDatasources":[
