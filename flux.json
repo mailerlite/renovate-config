@@ -1,8 +1,8 @@
 {
-    "extends":[
+    "extends": [
         "github>mailerlite/renovate-config:base"
     ],
-    "enabledManagers":[
+    "enabledManagers": [
         "regex",
         "github-actions",
         "kubernetes",
@@ -15,102 +15,102 @@
             "base/.+\\.ya?ml$"
         ]
     },
-    "customManagers":[
+    "customManagers": [
         {
             "customType": "regex",
-            "fileMatch":[
+            "fileMatch": [
                 "mailer.+\\.yaml$",
                 "clusters?/.+\\.yaml$",
                 "base/.+\\.yaml$"
             ],
-            "matchStrings":[
+            "matchStrings": [
                 "# renovate: datasource=(?<datasource>.*?) registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)"
             ],
-            "datasourceTemplate":"docker"
+            "datasourceTemplate": "docker"
         },
         {
             "customType": "regex",
-            "fileMatch":[
+            "fileMatch": [
                 "mailer.+\\.yaml$",
                 "clusters?/.+\\.yaml$",
                 "base/.+\\.yaml$"
             ],
-            "matchStrings":[
+            "matchStrings": [
                 "registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)"
             ],
-            "datasourceTemplate":"helm"
+            "datasourceTemplate": "helm"
         },
         {
             "customType": "regex",
-            "fileMatch":[
+            "fileMatch": [
                 "mailer.+\\.yaml$",
                 "clusters?/.+\\.yaml$",
                 "base/.+\\.yaml$"
             ],
-            "matchStrings":[
+            "matchStrings": [
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?(?:\n.*?)(?:\n.*?)?tag: .*?(?<currentValue>.*)"
             ],
-            "datasourceTemplate":"docker"
+            "datasourceTemplate": "docker"
         },
         {
             "customType": "regex",
-            "fileMatch":[
+            "fileMatch": [
                 "mailer.+\\.yaml$",
                 "clusters?/.+\\.yaml$",
                 "base/.+\\.yaml$"
             ],
-            "matchStrings":[
+            "matchStrings": [
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?image: .*?:(?<currentValue>.*)"
             ],
-            "datasourceTemplate":"docker"
+            "datasourceTemplate": "docker"
         },
         {
             "customType": "regex",
-            "fileMatch":[
+            "fileMatch": [
                 "^.pre-commit-config.yaml$"
             ],
-            "matchStrings":[
+            "matchStrings": [
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?rev: .*?(?<currentValue>.*)"
             ],
-            "datasourceTemplate":"github-releases"
+            "datasourceTemplate": "github-releases"
         }
     ],
-    "packageRules":[
+    "packageRules": [
         {
-            "matchPackageNames":["europe-docker.pkg.dev/mailerlitehub/groot/groot"],
+            "matchPackageNames": ["europe-docker.pkg.dev/mailerlitehub/groot/groot"],
             "automerge": true,
             "automergeType": "pr",
             "platformAutomerge": true,
-            "addLabels":["groot", "automerge"],
-            "schedule": ["every 1 hour"],
+            "addLabels": ["groot", "automerge"],
+            "schedule": ["* * * * 1-5"],
             "prPriority": 100
         },
         {
-            "matchDatasources":[
+            "matchDatasources": [
                 "helm"
             ],
-            "separateMinorPatch":true,
-            "ignoreDeprecated":true,
-            "additionalBranchPrefix":"{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
-            "addLabels":["helm", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"],
-            "schedule": ["before 1am", "after 11pm"]
+            "separateMinorPatch": true,
+            "ignoreDeprecated": true,
+            "additionalBranchPrefix": "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
+            "addLabels": ["helm", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"],
+            "schedule": ["* 23,0 * * 1-5"]
         },
         {
-            "matchDatasources":[
+            "matchDatasources": [
                 "docker"
             ],
-            "separateMinorPatch":true,
-            "ignoreDeprecated":true,
-            "additionalBranchPrefix":"{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
-            "addLabels":["docker", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"],
-            "schedule": ["before 2am", "after 10pm"]
+            "separateMinorPatch": true,
+            "ignoreDeprecated": true,
+            "additionalBranchPrefix": "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
+            "addLabels": ["docker", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"],
+            "schedule": ["* 22-23,0-1 * * 1-5"]
         },
         {
-            "matchPackagePatterns":[
+            "matchPackagePatterns": [
                 "^victoriametrics"
             ],
-            "additionalBranchPrefix":"{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
-            "schedule": ["before 3am", "after 9pm"]
+            "additionalBranchPrefix": "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
+            "schedule": ["* 21-23,0-2 * * 1-5"]
         },
         {
             "groupName": "app-template patch dependencies",
@@ -121,7 +121,7 @@
             "matchUpdateTypes": [
               "patch"
             ],
-            "schedule": ["before 4am", "after 8pm"]
+            "schedule": ["* 20-23,0-3 * * 1-5"]
         },
         {
             "groupName": "app-template minor dependencies",
@@ -132,7 +132,7 @@
             "matchUpdateTypes": [
               "minor"
             ],
-            "schedule": ["before 5am", "after 7pm"]
+            "schedule": ["* 19-23,0-4 * * 1-5"]
         }
     ]
 }

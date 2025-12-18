@@ -1,86 +1,86 @@
 {
-    "extends":[
+    "extends": [
         "github>mailerlite/renovate-config:base"
     ],
-    "enabledManagers":[
+    "enabledManagers": [
         "regex",
         "docker-compose",
         "helmv3",
         "github-actions"
     ],
-    "regexManagers":[
+    "regexManagers": [
         {
-            "fileMatch":["(^|\/|.)Dockerfile$"],
-            "matchStrings":[
+            "fileMatch": ["(^|\/|.)Dockerfile$"],
+            "matchStrings": [
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( extractVersion=(?<extractVersion>.+?))?( versioning=(?<versioning>.*?))?\n.*?_VERSION=[\"]?(?<currentValue>.*[^\"\\n])"
             ],
-            "versioningTemplate":"{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+            "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
         },
         {
-            "fileMatch":["^Makefile$"],
-            "matchStrings":[
+            "fileMatch": ["^Makefile$"],
+            "matchStrings": [
                 "OCTOPUS_IMAGE := (?:.*?\/mailergroup\/)(?<depName>.*?):(?<currentValue>.*?[a-f0-9].*)"
             ],
-            "datasourceTemplate":"docker"
+            "datasourceTemplate": "docker"
         },
         {
-            "fileMatch":["(^|\/|.)Dockerfile$"],
-            "matchStrings":[
+            "fileMatch": ["(^|\/|.)Dockerfile$"],
+            "matchStrings": [
                 "FROM (?:.*?\/mailergroup\/)(?<depName>[a-z0-9.\/-]+)(?::(?<currentValue>[a-z0-9.-]+))?"
             ],
-            "datasourceTemplate":"docker"
+            "datasourceTemplate": "docker"
         },
         {
-            "fileMatch":["(?:helm|helmchart)/values.(?:dev|prod|staging|production).(?:yaml|yml)"],
-            "matchStrings":[
+            "fileMatch": ["(?:helm|helmchart)/values.(?:dev|prod|staging|production).(?:yaml|yml)"],
+            "matchStrings": [
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?image: .*?:(?<currentValue>.*)"
             ],
-            "versioningTemplate":"{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+            "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
         }
     ],
-    "packageRules":[
+    "packageRules": [
         {
-            "matchPackagePatterns":[
+            "matchPackagePatterns": [
                 "octopus",
                 "swiss-army-knife"
             ],
-            "registryUrls":["https://europe-docker.pkg.dev/mailergroup/"]
+            "registryUrls": ["https://europe-docker.pkg.dev/mailergroup/"]
         },
         {
-            "matchPackagePatterns":["europe-docker.pkg.dev/mailerlite-v2/landings/landings"],
-            "registryUrls":["https://europe-docker.pkg.dev/mailerlite-v2/"]
+            "matchPackagePatterns": ["europe-docker.pkg.dev/mailerlite-v2/landings/landings"],
+            "registryUrls": ["https://europe-docker.pkg.dev/mailerlite-v2/"]
         },
         {
-            "matchDatasources":["docker"],
-            "addLabels":["docker"],
-            "reviewers":["team:sre"],
-            "schedule": ["before 2am", "after 11pm"]
+            "matchDatasources": ["docker"],
+            "addLabels": ["docker"],
+            "reviewers": ["team:sre"],
+            "schedule": ["* 23,0,1 * * 1-5"]
         },
         {
-            "matchDatasources":["github-actions"],
-            "addLabels":["github"],
-            "reviewers":["team:sre"],
-            "schedule": ["before 3am", "after 10pm"]
+            "matchDatasources": ["github-actions"],
+            "addLabels": ["github"],
+            "reviewers": ["team:sre"],
+            "schedule": ["* 22-23,0-2 * * 1-5"]
         },
         {
-            "matchPackagePatterns":["elasticsearch"],
-            "matchUpdateTypes":["patch","minor"]
+            "matchPackagePatterns": ["elasticsearch"],
+            "matchUpdateTypes": ["patch","minor"]
         },
         {
-            "matchPackagePatterns":["elasticsearch"],
-            "matchUpdateTypes":["major"],
-            "enabled":false
+            "matchPackagePatterns": ["elasticsearch"],
+            "matchUpdateTypes": ["major"],
+            "enabled": false
         },
         {
-            "matchDatasources":["helm"],
-            "addLabels":["helm"],
-            "reviewers":["team:sre"],
-            "schedule": ["before 4am", "after 9pm"]
+            "matchDatasources": ["helm"],
+            "addLabels": ["helm"],
+            "reviewers": ["team:sre"],
+            "schedule": ["* 21-23,0-3 * * 1-5"]
         },
         {
-            "matchDatasources":["github-releases"],
-            "reviewers":["team:sre"],
-            "schedule": ["before 5am", "after 8pm"]
+            "matchDatasources": ["github-releases"],
+            "reviewers": ["team:sre"],
+            "schedule": ["* 20-23,0-4 * * 1-5"]
         }
     ]
 }
