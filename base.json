@@ -9,7 +9,6 @@
     "prConcurrentLimit": 0,
     "prHourlyLimit": 0,
     "minimumReleaseAge": "1 day",
-    "schedule": ["* 22-23,0-5 * * 1-5"],
     "timezone": "UTC",
     "osvVulnerabilityAlerts": true,
     "vulnerabilityAlerts": {
@@ -25,15 +24,13 @@
         }
     ],
     "dockerfile": {
-        "fileMatch": [
-            "^Makefile$"
+        "managerFilePatterns": [
+            "/^Makefile$/"
         ]
     },
     "helm-values": {
-        "fileMatch": [
-            "clusters/.+/helm-release\\.yaml$",
-            "base/.+/helm-release\\.yaml$",
-            "components/.+/helm-release\\.yaml$"
+        "managerFilePatterns": [
+            "/(clusters|base|components)/.+/helm-?release\\.ya?ml$/"
         ]
     }
 }

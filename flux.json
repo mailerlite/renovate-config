@@ -9,32 +9,34 @@
         "flux"
     ],
     "flux": {
-        "fileMatch": [
-            "mailer.+\\.ya?ml$",
-            "clusters?/.+\\.ya?ml$",
-            "base/.+\\.ya?ml$"
+        "managerFilePatterns": [
+            "/mailer.+\\.ya?ml$/",
+            "/clusters?/.+\\.ya?ml$/",
+            "/base/.+\\.ya?ml$/"
         ]
     },
-    "schedule": ["* 0-5 * * 1"],
+    "schedule": ["* 5 * * 1"],
     "customManagers": [
         {
             "customType": "regex",
-            "fileMatch": [
-                "mailer.+\\.yaml$",
-                "clusters?/.+\\.yaml$",
-                "base/.+\\.yaml$"
+            "managerFilePatterns": [
+                "/mailer.+\\.ya?ml$/",
+                "/clusters?/.+\\.ya?ml$/",
+                "/base/.+\\.ya?ml$/"
             ],
             "matchStrings": [
-                "# renovate: datasource=(?<datasource>.*?) registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)"
+                "# renovate: datasource=(?<datasource>.*?) registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)",
+                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?(?:\n.*?)(?:\n.*?)?tag: .*?(?<currentValue>.*)",
+                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?image: .*?:(?<currentValue>.*)"
             ],
             "datasourceTemplate": "docker"
         },
         {
             "customType": "regex",
-            "fileMatch": [
-                "mailer.+\\.yaml$",
-                "clusters?/.+\\.yaml$",
-                "base/.+\\.yaml$"
+            "managerFilePatterns": [
+                "/mailer.+\\.ya?ml$/",
+                "/clusters?/.+\\.ya?ml$/",
+                "/base/.+\\.ya?ml$/"
             ],
             "matchStrings": [
                 "registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)"
@@ -43,32 +45,8 @@
         },
         {
             "customType": "regex",
-            "fileMatch": [
-                "mailer.+\\.yaml$",
-                "clusters?/.+\\.yaml$",
-                "base/.+\\.yaml$"
-            ],
-            "matchStrings": [
-                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?(?:\n.*?)(?:\n.*?)?tag: .*?(?<currentValue>.*)"
-            ],
-            "datasourceTemplate": "docker"
-        },
-        {
-            "customType": "regex",
-            "fileMatch": [
-                "mailer.+\\.yaml$",
-                "clusters?/.+\\.yaml$",
-                "base/.+\\.yaml$"
-            ],
-            "matchStrings": [
-                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?image: .*?:(?<currentValue>.*)"
-            ],
-            "datasourceTemplate": "docker"
-        },
-        {
-            "customType": "regex",
-            "fileMatch": [
-                "^.pre-commit-config.yaml$"
+            "managerFilePatterns": [
+                "/^\\.pre-commit-config\\.ya?ml$/"
             ],
             "matchStrings": [
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?rev: .*?(?<currentValue>.*)"
@@ -84,7 +62,7 @@
             "automergeType": "pr",
             "platformAutomerge": true,
             "addLabels": ["groot", "automerge"],
-            "schedule": ["* * * * 1-5"],
+            "schedule": ["* * * * *"],
             "prPriority": 100,
             "minimumReleaseAge": "0 days"
         },
@@ -94,8 +72,7 @@
             "separateMinorPatch": true,
             "ignoreDeprecated": true,
             "additionalBranchPrefix": "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
-            "addLabels": ["helm", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"],
-            "schedule": ["* 23,0 * * 1-5"]
+            "addLabels": ["helm", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"]
         },
         {
             "description": "Docker images - separate PRs per package, split by environment",
@@ -103,30 +80,27 @@
             "separateMinorPatch": true,
             "ignoreDeprecated": true,
             "additionalBranchPrefix": "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
-            "addLabels": ["docker", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"],
-            "schedule": ["* 22-23,0-1 * * 1-5"]
+            "addLabels": ["docker", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"]
         },
         {
             "description": "VictoriaMetrics - split by environment",
             "matchPackagePatterns": ["^victoriametrics"],
             "additionalBranchPrefix": "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
-            "schedule": ["* 21-23,0-2 * * 1-5"]
+            "addLabels": ["VictoriaMetrics", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"]
         },
         {
             "description": "app-template patch updates",
             "groupName": "app-template patch dependencies",
             "groupSlug": "app-template-patch",
             "matchPackageNames": ["app-template"],
-            "matchUpdateTypes": ["patch"],
-            "schedule": ["* 20-23,0-3 * * 1-5"]
+            "matchUpdateTypes": ["patch"]
         },
         {
             "description": "app-template minor updates",
             "groupName": "app-template minor dependencies",
             "groupSlug": "app-template-minor",
             "matchPackageNames": ["app-template"],
-            "matchUpdateTypes": ["minor"],
-            "schedule": ["* 19-23,0-4 * * 1-5"]
+            "matchUpdateTypes": ["minor"]
         }
     ]
 }

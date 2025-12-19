@@ -11,7 +11,7 @@
     "customManagers": [
         {
             "customType": "regex",
-            "fileMatch": ["(^|\/|.)Dockerfile$"],
+            "managerFilePatterns": ["/Dockerfile(\\.[\\w-]+)?$/"],
             "matchStrings": [
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( extractVersion=(?<extractVersion>.+?))?( versioning=(?<versioning>.*?))?\n.*?_VERSION=[\"]?(?<currentValue>.*[^\"\\n])"
             ],
@@ -19,7 +19,7 @@
         },
         {
             "customType": "regex",
-            "fileMatch": ["(^|\/|.)Dockerfile$"],
+            "managerFilePatterns": ["/Dockerfile(\\.[\\w-]+)?$/"],
             "matchStrings": [
                 "FROM (?:.*?\/mailergroup\/)(?<depName>[a-z0-9.\/-]+)(?::(?<currentValue>[a-z0-9.-]+))?"
             ],
@@ -27,7 +27,7 @@
         },
         {
             "customType": "regex",
-            "fileMatch": ["(?:helm|helmchart)/values.(?:dev|prod|staging|production).(?:yaml|yml)"],
+            "managerFilePatterns": ["/helm(chart)?/values\\.(dev|prod|staging|production)\\.ya?ml$/"],
             "matchStrings": [
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?image: .*?:(?<currentValue>.*)"
             ],
@@ -38,7 +38,7 @@
         {
             "description": "Internal Octopus/Swiss-army-knife registry",
             "matchPackagePatterns": ["octopus", "swiss-army-knife"],
-            "registryUrls": ["https://europe-docker.pkg.dev/mailergroup/"]
+            "registryUrls": ["https://europe-docker.pkg.dev/mailerlitehub/"]
         },
         {
             "description": "Landings registry",
@@ -49,15 +49,13 @@
             "description": "Docker images - separate PRs per package",
             "matchDatasources": ["docker"],
             "addLabels": ["docker"],
-            "reviewers": ["team:sre"],
-            "schedule": ["* 23,0,1 * * 1-5"]
+            "reviewers": ["team:sre"]
         },
         {
             "description": "GitHub Actions - separate PRs per package",
             "matchDatasources": ["github-actions"],
             "addLabels": ["github"],
-            "reviewers": ["team:sre"],
-            "schedule": ["* 22-23,0-2 * * 1-5"]
+            "reviewers": ["team:sre"]
         },
         {
             "description": "Elasticsearch - allow patch/minor",
@@ -74,14 +72,12 @@
             "description": "Helm charts - separate PRs per package",
             "matchDatasources": ["helm"],
             "addLabels": ["helm"],
-            "reviewers": ["team:sre"],
-            "schedule": ["* 21-23,0-3 * * 1-5"]
+            "reviewers": ["team:sre"]
         },
         {
             "description": "GitHub releases - separate PRs per package",
             "matchDatasources": ["github-releases"],
-            "reviewers": ["team:sre"],
-            "schedule": ["* 20-23,0-4 * * 1-5"]
+            "reviewers": ["team:sre"]
         }
     ]
 }
