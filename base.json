@@ -1,14 +1,29 @@
 {
     "semanticCommits": "enabled",
     "dependencyDashboard": true,
+    "dependencyDashboardAutoclose": true,
     "suppressNotifications": ["prIgnoreNotification"],
-    "rebaseWhen": "conflicted",
+    "rebaseWhen": "behind-base-branch",
     "labels": ["renovate"],
     "onboardingConfigFileName": ".github/renovate.json",
-    "prConcurrentLimit": 2,
-    "prHourlyLimit": 4,
+    "prConcurrentLimit": 0,
+    "prHourlyLimit": 0,
+    "minimumReleaseAge": "1 day",
     "schedule": ["* 22-23,0-5 * * 1-5"],
     "timezone": "UTC",
+    "osvVulnerabilityAlerts": true,
+    "vulnerabilityAlerts": {
+        "labels": ["security"],
+        "schedule": ["* * * * *"],
+        "prPriority": 99
+    },
+    "packageRules": [
+        {
+            "description": "Major updates - require dashboard approval",
+            "matchUpdateTypes": ["major"],
+            "dependencyDashboardApproval": true
+        }
+    ],
     "dockerfile": {
         "fileMatch": [
             "^Makefile$"
