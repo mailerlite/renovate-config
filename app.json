@@ -21,7 +21,7 @@
             "customType": "regex",
             "managerFilePatterns": ["/Dockerfile(\\.[\\w-]+)?$/"],
             "matchStrings": [
-                "FROM (?:.*?\/mailergroup\/)(?<depName>[a-z0-9.\/-]+)(?::(?<currentValue>[a-z0-9.-]+))?"
+                "FROM (?:.*?\/mailerlitehub\/)(?<depName>[a-z0-9.\/-]+)(?::(?<currentValue>[a-z0-9.-]+))?"
             ],
             "datasourceTemplate": "docker"
         },
