@@ -19,14 +19,6 @@
         },
         {
             "customType": "regex",
-            "fileMatch": ["^Makefile$"],
-            "matchStrings": [
-                "OCTOPUS_IMAGE := (?:.*?\/mailergroup\/)(?<depName>.*?):(?<currentValue>.*?[a-f0-9].*)"
-            ],
-            "datasourceTemplate": "docker"
-        },
-        {
-            "customType": "regex",
             "fileMatch": ["(^|\/|.)Dockerfile$"],
             "matchStrings": [
                 "FROM (?:.*?\/mailergroup\/)(?<depName>[a-z0-9.\/-]+)(?::(?<currentValue>[a-z0-9.-]+))?"
