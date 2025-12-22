@@ -1,24 +1,36 @@
 {
     "semanticCommits": "enabled",
     "dependencyDashboard": true,
+    "dependencyDashboardAutoclose": true,
     "suppressNotifications": ["prIgnoreNotification"],
-    "rebaseWhen": "conflicted",
+    "rebaseWhen": "behind-base-branch",
     "labels": ["renovate"],
     "onboardingConfigFileName": ".github/renovate.json",
-    "prConcurrentLimit": 2,
-    "prHourlyLimit": 4,
-    "schedule": ["before 6am", "after 10pm"],
+    "prConcurrentLimit": 0,
+    "prHourlyLimit": 0,
+    "minimumReleaseAge": "1 day",
     "timezone": "UTC",
-    "dockerfile":{
-        "fileMatch":[
-            "^Makefile$"
+    "osvVulnerabilityAlerts": true,
+    "vulnerabilityAlerts": {
+        "labels": ["security"],
+        "schedule": ["* * * * *"],
+        "prPriority": 99
+    },
+    "packageRules": [
+        {
+            "description": "Major updates - require dashboard approval",
+            "matchUpdateTypes": ["major"],
+            "dependencyDashboardApproval": true
+        }
+    ],
+    "dockerfile": {
+        "managerFilePatterns": [
+            "/^Makefile$/"
         ]
     },
-    "helm-values":{
-        "fileMatch":[
-            "clusters/.+/helm-release\\.yaml$",
-            "base/.+/helm-release\\.yaml$",
-            "components/.+/helm-release\\.yaml$"
+    "helm-values": {
+        "managerFilePatterns": [
+            "/(clusters|base|components)/.+/helm-?release\\.ya?ml$/"
         ]
     }
 }
