@@ -60,11 +60,13 @@
             "matchPackageNames": ["europe-docker.pkg.dev/mailerlitehub/groot/groot"],
             "automerge": true,
             "automergeType": "pr",
-            "platformAutomerge": true,
+            "platformAutomerge": false,
             "addLabels": ["groot", "automerge"],
-            "schedule": ["* * * * *"],
-            "prPriority": 100,
-            "minimumReleaseAge": "0 days"
+            "schedule": ["at any time"], 
+            "internalChecksFilter": "none",
+            "ignoreTests": true,
+            "minimumReleaseAge": null,
+            "prPriority": 100
         },
         {
             "description": "Helm charts - separate PRs per package, split by environment",
