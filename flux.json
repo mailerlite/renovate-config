@@ -73,8 +73,13 @@
     ],
     "packageRules": [
         {
-            "description": "OCI helm charts and OCIRepository - disable digest pinning, not supported by helm or flux-local",
-            "matchDepTypes": ["helm-oci", "OCIRepository"],
+            "description": "OCI helm charts via annotation - disable digest pinning, inline tag@digest format is not valid for helm",
+            "matchDepTypes": ["helm-oci"],
+            "pinDigests": false
+        },
+        {
+            "description": "OCI helm charts via flux manager - disable digest pinning, inline tag@digest format is not valid for flux-local",
+            "matchPackagePatterns": ["/charts/"],
             "pinDigests": false
         },
         {
