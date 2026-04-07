@@ -20,6 +20,11 @@
     },
     "packageRules": [
         {
+            "description": "mailerlite/workflows - reusable workflows repo with no releases or versioning",
+            "matchPackageNames": ["mailerlite/workflows"],
+            "enabled": false
+        },
+        {
             "description": "Major updates - require dashboard approval",
             "matchUpdateTypes": ["major"],
             "dependencyDashboardApproval": true
