@@ -9,7 +9,7 @@
     "onboardingConfigFileName": ".github/renovate.json",
     "prConcurrentLimit": 0,
     "prHourlyLimit": 0,
-    "minimumReleaseAge": "1 day",
+    "minimumReleaseAge": "3 days",
     "timezone": "UTC",
     "osvVulnerabilityAlerts": true,
     "vulnerabilityAlerts": {
