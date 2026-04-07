@@ -4,6 +4,7 @@
     ],
     "enabledManagers": [
         "regex",
+        "dockerfile",
         "docker-compose",
         "helmv3",
         "github-actions"
@@ -13,7 +14,7 @@
             "customType": "regex",
             "managerFilePatterns": ["/Dockerfile(\\.[\\w-]+)?$/"],
             "matchStrings": [
-                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( extractVersion=(?<extractVersion>.+?))?( versioning=(?<versioning>.*?))?\n.*?_VERSION=[\"]?(?<currentValue>.*[^\"\\n])"
+                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( extractVersion=(?<extractVersion>.+?))?( versioning=(?<versioning>.*?))?( currentDigest=(?<currentDigest>sha256:[a-f0-9]+))?\n.*?_VERSION=[\"]?(?<currentValue>.*[^\"\\n])"
             ],
             "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
         },
@@ -21,28 +22,30 @@
             "customType": "regex",
             "managerFilePatterns": ["/Dockerfile(\\.[\\w-]+)?$/"],
             "matchStrings": [
-                "FROM (?:.*?\/mailerlitehub\/)(?<depName>[a-z0-9.\/-]+)(?::(?<currentValue>[a-z0-9.-]+))?"
+                "(?:FROM|COPY --from=)(?:.*?/mailerlitehub/)(?<depName>[a-z0-9./-]+)(?::(?<currentValue>[a-z0-9.-]+))?(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
             ],
-            "datasourceTemplate": "docker"
+            "datasourceTemplate": "docker",
+            "registryUrlTemplate": "https://europe-docker.pkg.dev/mailerlitehub/"
         },
         {
             "customType": "regex",
             "managerFilePatterns": ["/helm(chart)?/values\\.(dev|prod|staging|production)\\.ya?ml$/"],
             "matchStrings": [
-                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?image: .*?:(?<currentValue>.*)"
+                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?image: .*?:(?<currentValue>[^\\n@]*)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
             ],
             "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
         }
     ],
     "packageRules": [
         {
-            "description": "Internal Octopus/Swiss-army-knife registry",
-            "matchPackagePatterns": ["octopus", "swiss-army-knife"],
-            "registryUrls": ["https://europe-docker.pkg.dev/mailerlitehub/"]
+            "description": "Disable dockerfile manager for internal images - handled by custom regex manager",
+            "matchManagers": ["dockerfile"],
+            "matchPackagePatterns": ["mailerlitehub"],
+            "enabled": false
         },
         {
             "description": "Landings registry",
-            "matchPackagePatterns": ["europe-docker.pkg.dev/mailerlite-v2/landings/landings"],
+            "matchPackagePatterns": ["^europe-docker.pkg.dev/mailerlite-v2/landings/landings"],
             "registryUrls": ["https://europe-docker.pkg.dev/mailerlite-v2/"]
         },
         {
@@ -56,11 +59,6 @@
             "matchDatasources": ["github-actions"],
             "addLabels": ["github"],
             "reviewers": ["team:sre"]
-        },
-        {
-            "description": "Elasticsearch - allow patch/minor",
-            "matchPackagePatterns": ["elasticsearch"],
-            "matchUpdateTypes": ["patch", "minor"]
         },
         {
             "description": "Elasticsearch - disable major updates",

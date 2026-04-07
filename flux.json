@@ -8,6 +8,13 @@
         "kubernetes",
         "flux"
     ],
+    "kubernetes": {
+        "managerFilePatterns": [
+            "/mailer.+\\.ya?ml$/",
+            "/clusters?/.+\\.ya?ml$/",
+            "/base/.+\\.ya?ml$/"
+        ]
+    },
     "flux": {
         "managerFilePatterns": [
             "/mailer.+\\.ya?ml$/",
@@ -26,12 +33,12 @@
             ],
             "matchStrings": [
                 "# renovate: datasource=(?<datasource>.*?) registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)",
-                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?(?:\n.*?)(?:\n.*?)?tag: .*?(?<currentValue>.*)",
-                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?image: .*?:(?<currentValue>.*)"
-            ],
-            "datasourceTemplate": "docker"
+                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?(?:\n.*?)(?:\n.*?)?tag: .*?(?<currentValue>[^\\n@]*)(?:@(?<currentDigest>sha256:[a-f0-9]+))?",
+                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?image: .*?:(?<currentValue>[^\\n@]*)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
+            ]
         },
         {
+            "description": "bjw-s/app-template: auto-detect repository+tag pairs without annotation",
             "customType": "regex",
             "managerFilePatterns": [
                 "/mailer.+\\.ya?ml$/",
@@ -39,9 +46,9 @@
                 "/base/.+\\.ya?ml$/"
             ],
             "matchStrings": [
-                "registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)"
+                "repository: (?<depName>[^\\n]+)\\n\\s*tag: (?<currentValue>[^\\n@]*)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
             ],
-            "datasourceTemplate": "helm"
+            "datasourceTemplate": "docker"
         },
         {
             "customType": "regex",
@@ -50,8 +57,7 @@
             ],
             "matchStrings": [
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?rev: .*?(?<currentValue>.*)"
-            ],
-            "datasourceTemplate": "github-releases"
+            ]
         }
     ],
     "packageRules": [
@@ -69,26 +75,27 @@
             "prPriority": 100
         },
         {
-            "description": "Helm charts - separate PRs per package, split by environment",
+            "description": "Helm and Docker - split by environment, separate minor/patch",
+            "matchDatasources": ["helm", "docker"],
+            "separateMinorPatch": true,
+            "ignoreDeprecated": true,
+            "additionalBranchPrefix": "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
+            "addLabels": ["{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"]
+        },
+        {
+            "description": "Helm charts label",
             "matchDatasources": ["helm"],
-            "separateMinorPatch": true,
-            "ignoreDeprecated": true,
-            "additionalBranchPrefix": "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
-            "addLabels": ["helm", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"]
+            "addLabels": ["helm"]
         },
         {
-            "description": "Docker images - separate PRs per package, split by environment",
+            "description": "Docker images label",
             "matchDatasources": ["docker"],
-            "separateMinorPatch": true,
-            "ignoreDeprecated": true,
-            "additionalBranchPrefix": "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
-            "addLabels": ["docker", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"]
+            "addLabels": ["docker"]
         },
         {
-            "description": "VictoriaMetrics - split by environment",
+            "description": "VictoriaMetrics label",
             "matchPackagePatterns": ["^victoriametrics"],
-            "additionalBranchPrefix": "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
-            "addLabels": ["VictoriaMetrics", "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"]
+            "addLabels": ["VictoriaMetrics"]
         },
         {
             "description": "app-template patch updates",

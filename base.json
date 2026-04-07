@@ -1,6 +1,7 @@
 {
     "semanticCommits": "enabled",
     "dependencyDashboard": true,
+    "pinDigests": true,
     "dependencyDashboardAutoclose": true,
     "suppressNotifications": ["prIgnoreNotification"],
     "rebaseWhen": "behind-base-branch",
@@ -14,6 +15,7 @@
     "vulnerabilityAlerts": {
         "labels": ["security"],
         "schedule": ["* * * * *"],
+        "minimumReleaseAge": "0 days",
         "prPriority": 99
     },
     "packageRules": [
@@ -21,16 +23,18 @@
             "description": "Major updates - require dashboard approval",
             "matchUpdateTypes": ["major"],
             "dependencyDashboardApproval": true
+        },
+        {
+            "description": "Group digest-only pins into a single PR - no version changes",
+            "matchManagers": ["dockerfile", "docker-compose"],
+            "matchUpdateTypes": ["pinDigest"],
+            "groupName": "Docker digest pins"
         }
     ],
     "dockerfile": {
         "managerFilePatterns": [
-            "/^Makefile$/"
-        ]
-    },
-    "helm-values": {
-        "managerFilePatterns": [
-            "/(clusters|base|components)/.+/helm-?release\\.ya?ml$/"
+            "/^Makefile$/",
+            "/Dockerfile(\\.[\\w-]+)?$/"
         ]
     }
 }
