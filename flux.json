@@ -32,7 +32,18 @@
                 "/base/.+\\.ya?ml$/"
             ],
             "matchStrings": [
-                "# renovate: datasource=(?<datasource>.*?) registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)",
+                "# renovate: datasource=(?<datasource>.*?) registryUrl=(?<registryUrl>.*?) chart=(?<depName>.*)\n *version: (?<currentValue>.*)"
+            ],
+            "depTypeTemplate": "helm-oci"
+        },
+        {
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/mailer.+\\.ya?ml$/",
+                "/clusters?/.+\\.ya?ml$/",
+                "/base/.+\\.ya?ml$/"
+            ],
+            "matchStrings": [
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?(?:\n.*?)(?:\n.*?)?tag: .*?(?<currentValue>[^\\n@]*)(?:@(?<currentDigest>sha256:[a-f0-9]+))?",
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?image: .*?:(?<currentValue>[^\\n@]*)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
             ]
@@ -61,6 +72,11 @@
         }
     ],
     "packageRules": [
+        {
+            "description": "OCI helm charts - disable digest pinning, helm does not support version@digest format",
+            "matchDepTypes": ["helm-oci"],
+            "pinDigests": false
+        },
         {
             "description": "Groot - high priority, always available, automerge",
             "matchPackageNames": ["europe-docker.pkg.dev/mailerlitehub/groot/groot"],
