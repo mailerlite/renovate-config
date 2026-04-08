@@ -147,6 +147,8 @@ image:
 
 To switch a resource from inline to separate field, manually add `digest: ""` once — Renovate will populate and maintain it from that point on.
 
+> Detection uses JSONata queries, so no `# renovate:` annotation is needed.
+
 ### Flux cluster — image field
 
 Use when the full image reference (including tag) appears on a single line.
