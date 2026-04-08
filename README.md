@@ -124,15 +124,16 @@ version: 1.2.3
 
 ### Flux cluster — app-template `repository` + `tag` (automatic)
 
-HelmReleases using [bjw-s/app-template](https://github.com/bjw-s-labs/app-template) are detected automatically — no annotation needed. Renovate reads the `repository` field as the image name and `tag` as the version.
+HelmReleases using [bjw-s/app-template](https://github.com/bjw-s-labs/app-template) are detected automatically via the native `helm-values` manager — no annotation needed.
 
 ```yaml
 image:
   repository: europe-docker.pkg.dev/mailerlitehub/screenshoter/screenshoter
-  tag: v3.2.3@sha256:abc123...
+  tag: v3.2.3
+  digest: sha256:abc123...  # optional - if present, Renovate keeps it updated here
 ```
 
-Works for internal images, Docker Hub, and ghcr.io. If you previously had a `# renovate:` comment above a `tag:` field, **remove it** — otherwise Renovate will open duplicate PRs for the same image.
+Works for internal images, Docker Hub, and ghcr.io. If a `digest:` field is present, Renovate writes the digest there. If absent, it appends inline as `tag: v3.2.3@sha256:...`.
 
 ### Flux cluster — image field
 
