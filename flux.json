@@ -58,7 +58,7 @@
                 "/base/.+\\.ya?ml$/"
             ],
             "matchStrings": [
-                "image[digest].{ \"depName\": repository, \"currentValue\": tag, \"currentDigest\": digest }"
+                "**.image[digest].{ \"depName\": repository, \"currentValue\": tag, \"currentDigest\": digest }"
             ],
             "datasourceTemplate": "docker",
             "depTypeTemplate": "app-template-with-digest"
@@ -73,7 +73,7 @@
                 "/base/.+\\.ya?ml$/"
             ],
             "matchStrings": [
-                "image[$not($exists(digest))].{ \"depName\": repository, \"currentValue\": tag }"
+                "**.image[$not($exists(digest))].{ \"depName\": repository, \"currentValue\": tag }"
             ],
             "datasourceTemplate": "docker"
         },
@@ -89,8 +89,8 @@
     ],
     "packageRules": [
         {
-            "description": "app-template with digest field - disable pinDigest updates, digest is already tracked via the digest field",
-            "matchDepTypes": ["app-template-with-digest"],
+            "description": "flux manager - disable digest pinning, inline tag@digest format is not valid for HelmRelease values, handled by custom managers",
+            "matchManagers": ["flux"],
             "pinDigests": false
         },
         {
@@ -99,18 +99,13 @@
             "pinDigests": false
         },
         {
-            "description": "OCI helm charts via flux manager - disable digest pinning, inline tag@digest format is not valid for flux-local",
-            "matchFileNames": ["**/charts/**"],
-            "pinDigests": false
-        },
-        {
             "description": "Groot - high priority, always available, automerge",
             "matchPackageNames": ["europe-docker.pkg.dev/mailerlitehub/groot/groot"],
             "automerge": true,
             "automergeType": "pr",
-            "platformAutomerge": false,
+            "automergeSchedule": ["at any time"], 
+            "platformAutomerge": true,
             "addLabels": ["groot", "automerge"],
-            "schedule": ["at any time"], 
             "internalChecksFilter": "none",
             "ignoreTests": true,
             "minimumReleaseAge": null,
