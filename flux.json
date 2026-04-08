@@ -100,7 +100,7 @@
         },
         {
             "description": "OCI helm charts via flux manager - disable digest pinning, inline tag@digest format is not valid for flux-local",
-            "matchPackagePatterns": ["/charts/"],
+            "matchFileNames": ["**/charts/**"],
             "pinDigests": false
         },
         {
