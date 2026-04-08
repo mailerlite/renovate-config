@@ -49,29 +49,30 @@
             ]
         },
         {
-            "description": "bjw-s/app-template: repository+tag+digest - write digest to separate digest field",
-            "customType": "regex",
+            "description": "app-template: repository+tag+digest - write digest to separate digest field",
+            "customType": "jsonata",
+            "fileFormat": "yaml",
             "managerFilePatterns": [
                 "/mailer.+\\.ya?ml$/",
                 "/clusters?/.+\\.ya?ml$/",
                 "/base/.+\\.ya?ml$/"
             ],
             "matchStrings": [
-                "repository: (?<depName>[^\\n]+)\\n(?<indent>\\s*)tag: (?<currentValue>[^\\n@]+)\\n\\s*digest: (?<currentDigest>sha256:[a-f0-9]+)"
+                "image[digest].{ \"depName\": repository, \"currentValue\": tag, \"currentDigest\": digest }"
             ],
-            "autoReplaceStringTemplate": "repository: {{depName}}\n{{indent}}tag: {{newValue}}\n{{indent}}digest: {{newDigest}}",
             "datasourceTemplate": "docker"
         },
         {
-            "description": "bjw-s/app-template: repository+tag - write digest inline with tag",
-            "customType": "regex",
+            "description": "app-template: repository+tag without digest - write digest inline with tag",
+            "customType": "jsonata",
+            "fileFormat": "yaml",
             "managerFilePatterns": [
                 "/mailer.+\\.ya?ml$/",
                 "/clusters?/.+\\.ya?ml$/",
                 "/base/.+\\.ya?ml$/"
             ],
             "matchStrings": [
-                "repository: (?<depName>[^\\n]+)\\n\\s*tag: (?<currentValue>[^\\n@]*)(?:@(?<currentDigest>sha256:[a-f0-9]+))?(?!\\n\\s*digest:)"
+                "image[$not($exists(digest))].{ \"depName\": repository, \"currentValue\": tag }"
             ],
             "datasourceTemplate": "docker"
         },
