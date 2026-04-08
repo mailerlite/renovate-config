@@ -5,6 +5,7 @@
     "enabledManagers": [
         "regex",
         "github-actions",
+        "helm-values",
         "kubernetes",
         "flux"
     ],
@@ -16,6 +17,13 @@
         ]
     },
     "flux": {
+        "managerFilePatterns": [
+            "/mailer.+\\.ya?ml$/",
+            "/clusters?/.+\\.ya?ml$/",
+            "/base/.+\\.ya?ml$/"
+        ]
+    },
+    "helm-values": {
         "managerFilePatterns": [
             "/mailer.+\\.ya?ml$/",
             "/clusters?/.+\\.ya?ml$/",
@@ -47,19 +55,6 @@
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?(?:\n.*?)(?:\n.*?)?tag: .*?(?<currentValue>[^\\n@]*)(?:@(?<currentDigest>sha256:[a-f0-9]+))?",
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?image: .*?:(?<currentValue>[^\\n@]*)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
             ]
-        },
-        {
-            "description": "bjw-s/app-template: auto-detect repository+tag pairs without annotation",
-            "customType": "regex",
-            "managerFilePatterns": [
-                "/mailer.+\\.ya?ml$/",
-                "/clusters?/.+\\.ya?ml$/",
-                "/base/.+\\.ya?ml$/"
-            ],
-            "matchStrings": [
-                "repository: (?<depName>[^\\n]+)\\n\\s*tag: (?<currentValue>[^\\n@]*)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
-            ],
-            "datasourceTemplate": "docker"
         },
         {
             "customType": "regex",
