@@ -5,7 +5,6 @@
     "enabledManagers": [
         "regex",
         "github-actions",
-        "helm-values",
         "kubernetes",
         "flux"
     ],
@@ -17,13 +16,6 @@
         ]
     },
     "flux": {
-        "managerFilePatterns": [
-            "/mailer.+\\.ya?ml$/",
-            "/clusters?/.+\\.ya?ml$/",
-            "/base/.+\\.ya?ml$/"
-        ]
-    },
-    "helm-values": {
         "managerFilePatterns": [
             "/mailer.+\\.ya?ml$/",
             "/clusters?/.+\\.ya?ml$/",
@@ -55,6 +47,33 @@
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?(?:\n.*?)(?:\n.*?)?tag: .*?(?<currentValue>[^\\n@]*)(?:@(?<currentDigest>sha256:[a-f0-9]+))?",
                 "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?image: .*?:(?<currentValue>[^\\n@]*)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
             ]
+        },
+        {
+            "description": "bjw-s/app-template: repository+tag+digest - write digest to separate digest field",
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/mailer.+\\.ya?ml$/",
+                "/clusters?/.+\\.ya?ml$/",
+                "/base/.+\\.ya?ml$/"
+            ],
+            "matchStrings": [
+                "repository: (?<depName>[^\\n]+)\\n(?<indent>\\s*)tag: (?<currentValue>[^\\n@]+)\\n\\s*digest: (?<currentDigest>sha256:[a-f0-9]+)"
+            ],
+            "autoReplaceStringTemplate": "repository: {{depName}}\n{{indent}}tag: {{newValue}}\n{{indent}}digest: {{newDigest}}",
+            "datasourceTemplate": "docker"
+        },
+        {
+            "description": "bjw-s/app-template: repository+tag - write digest inline with tag",
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/mailer.+\\.ya?ml$/",
+                "/clusters?/.+\\.ya?ml$/",
+                "/base/.+\\.ya?ml$/"
+            ],
+            "matchStrings": [
+                "repository: (?<depName>[^\\n]+)\\n\\s*tag: (?<currentValue>[^\\n@]*)(?:@(?<currentDigest>sha256:[a-f0-9]+))?(?!\\n\\s*digest:)"
+            ],
+            "datasourceTemplate": "docker"
         },
         {
             "customType": "regex",

@@ -124,16 +124,28 @@ version: 1.2.3
 
 ### Flux cluster — app-template `repository` + `tag` (automatic)
 
-HelmReleases using [bjw-s/app-template](https://github.com/bjw-s-labs/app-template) are detected automatically via the native `helm-values` manager — no annotation needed.
+HelmReleases using [bjw-s/app-template](https://github.com/bjw-s-labs/app-template) are detected automatically — no annotation needed. Works for internal images, Docker Hub, and ghcr.io.
+
+Renovate handles digest pinning in two ways depending on whether a `digest:` field is present:
+
+**With `digest:` field** — digest is written to the dedicated field, tag stays clean:
 
 ```yaml
 image:
   repository: europe-docker.pkg.dev/mailerlitehub/screenshoter/screenshoter
   tag: v3.2.3
-  digest: sha256:abc123...  # optional - if present, Renovate keeps it updated here
+  digest: sha256:abc123...
 ```
 
-Works for internal images, Docker Hub, and ghcr.io. If a `digest:` field is present, Renovate writes the digest there. If absent, it appends inline as `tag: v3.2.3@sha256:...`.
+**Without `digest:` field** — digest is appended inline to the tag:
+
+```yaml
+image:
+  repository: europe-docker.pkg.dev/mailerlitehub/screenshoter/screenshoter
+  tag: v3.2.3@sha256:abc123...
+```
+
+To switch a resource from inline to separate field, manually add `digest: ""` once — Renovate will populate and maintain it from that point on.
 
 ### Flux cluster — image field
 
