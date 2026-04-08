@@ -60,7 +60,8 @@
             "matchStrings": [
                 "image[digest].{ \"depName\": repository, \"currentValue\": tag, \"currentDigest\": digest }"
             ],
-            "datasourceTemplate": "docker"
+            "datasourceTemplate": "docker",
+            "depTypeTemplate": "app-template-with-digest"
         },
         {
             "description": "app-template: repository+tag without digest - write digest inline with tag",
@@ -87,6 +88,11 @@
         }
     ],
     "packageRules": [
+        {
+            "description": "app-template with digest field - disable pinDigest updates, digest is already tracked via the digest field",
+            "matchDepTypes": ["app-template-with-digest"],
+            "pinDigests": false
+        },
         {
             "description": "OCI helm charts via annotation - disable digest pinning, inline tag@digest format is not valid for helm",
             "matchDepTypes": ["helm-oci"],
