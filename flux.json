@@ -3,7 +3,8 @@
         "github>mailerlite/renovate-config:base"
     ],
     "enabledManagers": [
-        "regex",
+        "custom.regex",
+        "custom.jsonata",
         "github-actions",
         "kubernetes",
         "flux"
