@@ -75,7 +75,8 @@
             "matchStrings": [
                 "**.image[$exists(repository) and $exists(tag) and $not($exists(digest))].{ \"depName\": repository, \"currentValue\": $substringBefore(tag, \"@\"), \"currentDigest\": $contains(tag, \"@\") ? $substringAfter(tag, \"@\") : \"\" }"
             ],
-            "datasourceTemplate": "docker"
+            "datasourceTemplate": "docker",
+            "depTypeTemplate": "app-template-inline-digest"
         },
         {
             "customType": "regex",
@@ -92,6 +93,11 @@
             "description": "flux manager - disable digest pinning, inline tag@digest format is not valid for HelmRelease values, handled by custom managers",
             "matchManagers": ["flux"],
             "pinDigests": false
+        },
+        {
+            "description": "app-template images with dedicated digest field - enable digest pinning so digest field is updated alongside tag on version bumps",
+            "matchDepTypes": ["app-template-with-digest"],
+            "pinDigests": true
         },
         {
             "description": "OCI helm charts via annotation - disable digest pinning, inline tag@digest format is not valid for helm",
