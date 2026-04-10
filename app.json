@@ -3,7 +3,7 @@
         "github>mailerlite/renovate-config:base"
     ],
     "enabledManagers": [
-        "regex",
+        "custom.regex",
         "dockerfile",
         "docker-compose",
         "helmv3",
