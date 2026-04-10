@@ -58,7 +58,7 @@
                 "/base/.+\\.ya?ml$/"
             ],
             "matchStrings": [
-                "**.image[$exists(repository) and $exists(tag) and $exists(digest)].{ \"depName\": repository, \"currentValue\": tag, \"currentDigest\": digest }"
+                "**.image[$exists(repository) and $exists(tag) and $exists(digest)].{ \"depName\": $.repository, \"currentValue\": $.tag, \"currentDigest\": $.digest }"
             ],
             "datasourceTemplate": "docker",
             "depTypeTemplate": "app-template-with-digest"
@@ -73,7 +73,7 @@
                 "/base/.+\\.ya?ml$/"
             ],
             "matchStrings": [
-                "**.image[$exists(repository) and $exists(tag) and $not($exists(digest))].{ \"depName\": repository, \"currentValue\": $substringBefore(tag, \"@\"), \"currentDigest\": $contains(tag, \"@\") ? $substringAfter(tag, \"@\") : \"\" }"
+                "**.image[$exists(repository) and $exists(tag) and $not($exists(digest))].{ \"depName\": $.repository, \"currentValue\": $substringBefore($.tag, \"@\"), \"currentDigest\": $contains($.tag, \"@\") ? $substringAfter($.tag, \"@\") : \"\" }"
             ],
             "datasourceTemplate": "docker",
             "depTypeTemplate": "app-template-inline-digest"
