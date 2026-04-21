@@ -30,6 +30,12 @@
             "dependencyDashboardApproval": true
         },
         {
+            "description": "Internal images from GCP artifact registry - no minimum release age",
+            "matchPackagePatterns": ["docker\\.pkg\\.dev/mailer"],
+            "matchDatasources": ["docker"],
+            "minimumReleaseAge": null
+        },
+        {
             "description": "Group digest-only pins into a single PR - no version changes",
             "matchManagers": ["dockerfile", "docker-compose"],
             "matchUpdateTypes": ["pinDigest"],
