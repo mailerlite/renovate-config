@@ -33,8 +33,7 @@
             "description": "Internal images from GCP artifact registry - no minimum release age, create PRs at any time",
             "matchPackagePatterns": ["docker\\.pkg\\.dev/mailer"],
             "matchDatasources": ["docker"],
-            "minimumReleaseAge": null,
-            "schedule": ["* * * * *"]
+            "minimumReleaseAge": null
         },
         {
             "description": "Group digest-only pins into a single PR - no version changes",
