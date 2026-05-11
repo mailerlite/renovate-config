@@ -25,6 +25,12 @@
             "enabled": false
         },
         {
+            "description": "mailerlite/base-docker-images actions - do not pin digests, internal actions managed separately",
+            "matchManagers": ["github-actions"],
+            "matchPackagePatterns": ["^mailerlite/base-docker-images/"],
+            "pinDigests": false
+        },
+        {
             "description": "Major updates - require dashboard approval",
             "matchUpdateTypes": ["major"],
             "dependencyDashboardApproval": true
