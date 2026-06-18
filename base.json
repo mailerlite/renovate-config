@@ -46,6 +46,17 @@
             "matchManagers": ["dockerfile", "docker-compose"],
             "matchUpdateTypes": ["pinDigest"],
             "groupName": "Docker digest pins"
+        },
+        {
+            "description": "images.yaml version slots - patch updates only, never promote to a new minor/major",
+            "matchFileNames": ["**/images.yaml"],
+            "matchUpdateTypes": ["major", "minor"],
+            "enabled": false
+        },
+        {
+            "description": "images.yaml - one PR per package across all its tracked version slots",
+            "matchFileNames": ["**/images.yaml"],
+            "groupName": "{{depName}}"
         }
     ],
     "dockerfile": {
@@ -53,5 +64,17 @@
             "/^Makefile$/",
             "/Dockerfile(\\.[\\w-]+)?$/"
         ]
-    }
+    },
+    "customManagers": [
+        {
+            "customType": "regex",
+            "managerFilePatterns": ["/(^|/)images\\.yaml$/"],
+            "matchStringsStrategy": "recursive",
+            "matchStrings": [
+                "versions:\\s+#\\s+renovate:\\s+datasource=(?<datasource>[^\\s\\n]+)\\s+depName=(?<depName>[^\\s\\n]+)(?:\\s+extractVersion=(?<extractVersion>[^\\s\\n]+))?(?:\\s+versioning=(?<versioning>[^\\s\\n]+))?\\n(?:[ \\t]+-[^\\n]+\\n?)+",
+                "-\\s+\"(?<currentValue>[^\"]+)\""
+            ],
+            "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+        }
+    ]
 }
