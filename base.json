@@ -54,6 +54,12 @@
             "groupName": "{{depName}}"
         }
     ],
+    "enabledManagers": [
+        "custom.regex",
+        "dockerfile",
+        "docker-compose",
+        "github-actions"
+    ],
     "dockerfile": {
         "managerFilePatterns": [
             "/^Makefile$/",
