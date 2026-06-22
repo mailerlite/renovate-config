@@ -25,21 +25,16 @@
             "enabled": false
         },
         {
-            "description": "mailerlite/base-docker-images actions - do not pin digests, internal actions managed separately",
-            "matchManagers": ["github-actions"],
-            "matchPackagePatterns": ["^mailerlite/base-docker-images"],
-            "pinDigests": false
-        },
-        {
-            "description": "Major updates - require dashboard approval",
-            "matchUpdateTypes": ["major"],
-            "dependencyDashboardApproval": true
-        },
-        {
-            "description": "Internal images from GCP artifact registry - no minimum release age, create PRs at any time",
-            "matchPackagePatterns": ["docker\\.pkg\\.dev/mailer"],
+            "description": "Internal Docker images from GCP artifact registry - no minimum release age",
+            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215)/"],
             "matchDatasources": ["docker"],
-            "minimumReleaseAge": null
+            "minimumReleaseAge": "0 days"
+        },
+        {
+            "description": "Internal GitHub Actions - no minimum release age",
+            "matchManagers": ["github-actions"],
+            "matchPackagePatterns": ["^(mailerlite|mailersend|mailercheck)/"],
+            "minimumReleaseAge": "0 days"
         },
         {
             "description": "Group digest-only pins into a single PR - no version changes",
