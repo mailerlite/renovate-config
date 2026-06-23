@@ -20,9 +20,11 @@
     },
     "packageRules": [
         {
-            "description": "mailerlite/workflows - reusable workflows repo with no releases or versioning",
-            "matchPackageNames": ["mailerlite/workflows"],
-            "enabled": false
+            "description": "mailerlite/workflows and mailerlite/base-docker-images reusable workflows - pinned at main, no versioning",
+            "matchManagers": ["github-actions"],
+            "matchPackagePatterns": ["mailerlite/workflows", "mailerlite/base-docker-images"],
+            "enabled": false,
+            "pinDigests": false
         },
         {
             "description": "Internal Docker images from GCP artifact registry - no minimum release age",
