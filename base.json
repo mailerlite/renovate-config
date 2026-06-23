@@ -27,7 +27,7 @@
             "pinDigests": false
         },
         {
-            "description": "Internal Docker images from GCP artifact registry - no minimum release age, no digest pinning",
+            "description": "Internal Docker images from GCP artifact registry - no minimum release age, no digest pinning by default",
             "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215)/"],
             "matchDatasources": ["docker"],
             "minimumReleaseAge": "0 days",

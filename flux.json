@@ -90,6 +90,12 @@
     ],
     "packageRules": [
         {
+            "description": "Internal Docker images in Flux - enable digest pinning (overrides base default)",
+            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215)/"],
+            "matchDatasources": ["docker"],
+            "pinDigests": true
+        },
+        {
             "description": "flux manager - disable digest pinning, inline tag@digest format is not valid for HelmRelease values, handled by custom managers",
             "matchManagers": ["flux"],
             "pinDigests": false
