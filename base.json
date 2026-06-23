@@ -27,16 +27,18 @@
             "pinDigests": false
         },
         {
-            "description": "Internal Docker images from GCP artifact registry - no minimum release age",
+            "description": "Internal Docker images from GCP artifact registry - no minimum release age, no digest pinning by default",
             "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215)/"],
             "matchDatasources": ["docker"],
-            "minimumReleaseAge": "0 days"
+            "minimumReleaseAge": "0 days",
+            "pinDigests": false
         },
         {
-            "description": "Internal GitHub Actions - no minimum release age",
+            "description": "Internal GitHub Actions - no minimum release age, no digest pinning",
             "matchManagers": ["github-actions"],
             "matchPackagePatterns": ["^(mailerlite|mailersend|mailercheck)/"],
-            "minimumReleaseAge": "0 days"
+            "minimumReleaseAge": "0 days",
+            "pinDigests": false
         },
         {
             "description": "Group digest-only pins into a single PR - no version changes",
