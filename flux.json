@@ -148,23 +148,10 @@
             "matchUpdateTypes": ["minor"]
         },
         {
-            "description": "Phase 1: Label PRs that would auto-merge in dev/staging - internal packages, patch/minor/pinDigest",
-            "matchPackagePatterns": [
-                "docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215)/",
-                "^(mailerlite|mailersend|mailercheck)/"
-            ],
-            "matchUpdateTypes": ["patch", "minor", "pinDigest"],
+            "description": "Phase 1: Label PRs that would auto-merge - internal Docker pinDigest in dev/staging (Flux-specific)",
+            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215)/"],
+            "matchUpdateTypes": ["pinDigest"],
             "matchFileNames": ["**/clusters/dev/**", "**/clusters/staging/**"],
-            "addLabels": ["automerge_test"]
-        },
-        {
-            "description": "Phase 1: Label PRs that would auto-merge in prod - internal packages, patch only (1-day soak gate planned)",
-            "matchPackagePatterns": [
-                "docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215)/",
-                "^(mailerlite|mailersend|mailercheck)/"
-            ],
-            "matchUpdateTypes": ["patch"],
-            "matchFileNames": ["**/clusters/prod/**"],
             "addLabels": ["automerge_test"]
         }
     ]
