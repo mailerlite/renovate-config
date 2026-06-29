@@ -148,11 +148,11 @@
             "matchUpdateTypes": ["minor"]
         },
         {
-            "description": "Phase 1: Label PRs that would auto-merge - internal Docker pinDigest in dev/staging (Flux-specific)",
+            "description": "Auto-merge internal Docker updates in dev/staging - patch/minor/pinDigest",
             "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215)/"],
-            "matchUpdateTypes": ["pinDigest"],
+            "matchUpdateTypes": ["patch", "minor", "pinDigest"],
             "matchFileNames": ["**/clusters/dev/**", "**/clusters/staging/**"],
-            "addLabels": ["automerge_test"]
+            "automerge": true
         }
     ]
 }
