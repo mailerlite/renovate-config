@@ -30,42 +30,121 @@ Add a `.github/renovate.json` to your repository and extend the appropriate conf
 }
 ```
 
+**Other repo (not an app or Flux cluster):**
+```json
+{
+  "extends": ["github>mailerlite/renovate-config:base"]
+}
+```
+
+---
+
+## Package policy
+
+Packages are classified as **internal** or **external** based on their origin.
+
+### Internal packages
+
+| Type | Pattern |
+|------|---------|
+| Docker | `europe-docker.pkg.dev/mailerlitehub/` |
+| Docker | `europe-docker.pkg.dev/mailerlite-gcp/` |
+| Docker | `europe-docker.pkg.dev/mailercheck-usa/` |
+| Docker | `europe-docker.pkg.dev/mailersend-214215/` |
+| GitHub Actions / Releases | `mailerlite/*`, `mailersend/*`, `mailercheck/*` |
+
+Internal packages:
+- No `minimumReleaseAge` — PRs are created immediately on release
+- No digest pinning (except internal Docker images in Flux cluster repos — see below)
+- Patch and minor updates auto-merge where applicable (see per-config sections below)
+- Major updates create a PR with no auto-merge
+
+### External packages
+
+All packages not matching the internal patterns above.
+
+- `minimumReleaseAge: 3 days` — a PR is only created after the version has been available for 3 days (supply chain safety buffer)
+- No auto-merge — all updates require manual review
+- Docker images and GitHub Actions are digest-pinned
+
+### Vulnerability alerts
+
+Applies to all packages regardless of internal/external classification:
+
+- `minimumReleaseAge` is bypassed — security PRs are opened immediately
+- PRs receive a `security` label and are prioritised above all other updates
+- Powered by OSV (`osvVulnerabilityAlerts`)
+
+### Ignored packages
+
+| Package | Reason |
+|---------|--------|
+| `mailerlite/workflows` | Reusable workflow repo, pinned at `main`, no versioned releases |
+| `mailerlite/base-docker-images` (as GH Action) | Reusable workflow repo, pinned at `main`, no versioned releases |
+| `elasticsearch` majors | Intentional hold — major Elasticsearch upgrades require manual intervention |
+
 ---
 
 ## What each config does
 
 ### base
 
-Applied automatically to all configs that extend `app` or `flux`. Sets organisation-wide defaults:
+Applied to all configs. Sets organisation-wide defaults:
 
 - Semantic commit messages
 - Dependency dashboard with auto-close
-- Digest pinning for all Docker images and GitHub Actions
-- 1-day minimum release age before a PR is opened
-- Security vulnerability PRs bypass the age gate and are opened immediately
-- Major updates require manual approval via the dependency dashboard
-- Digest-only pin updates are grouped into a single PR (no version change)
+- Digest pinning enabled globally for external packages
+- `minimumReleaseAge: 3 days` for external packages; `0 days` for internal
+- Vulnerability alerts bypass the age gate and are prioritised
+- Digest-only pin updates for external images grouped into a single PR
+
+**Managers enabled by default:** `dockerfile`, `docker-compose`, `github-actions`, `custom.regex`
+
+Repos extending `base` directly get these managers. Repos extending `app` or `flux` override this list with their own.
 
 ### app
 
-For application and microservice repositories. Enables:
+For application and microservice repositories. Managers:
 
-- `dockerfile` — external images in `Dockerfile*` and `Makefile`
-- `docker-compose` — images in compose files
-- `helmv3` — Helm chart dependencies
-- `github-actions` — actions in `.github/workflows/`
-- `regex` — custom annotations (see below)
+| Manager | What it tracks |
+|---------|---------------|
+| `dockerfile` | `FROM` and `ARG`/`ENV` versions in `Dockerfile*` and `Makefile` |
+| `docker-compose` | `image:` fields in compose files |
+| `helmv3` | Helm chart dependencies in `Chart.yaml` |
+| `github-actions` | `uses:` in `.github/workflows/` |
+| `custom.regex` | Annotated versions (see Annotations section) |
+
+Internal Docker images in Dockerfiles and compose files are **not** digest-pinned. External images are.
+
+Internal GHA patch and minor updates auto-merge. All other updates create a PR.
 
 ### flux
 
-For Kubernetes Flux cluster repositories. Enables:
+For Kubernetes Flux cluster repositories. Managers:
 
-- `flux` — HelmRelease, GitRepository, etc. in cluster YAML files
-- `kubernetes` — raw Kubernetes manifests
-- `github-actions` — actions in `.github/workflows/`
-- `regex` — custom annotations (see below)
+| Manager | What it tracks |
+|---------|---------------|
+| `flux` | HelmRelease, HelmRepository, GitRepository, etc. |
+| `kubernetes` | Raw Kubernetes manifests |
+| `github-actions` | `uses:` in `.github/workflows/` |
+| `custom.regex` | Annotated versions in cluster YAML |
+| `custom.jsonata` | app-template `image` fields (repository/tag/digest) |
 
-Updates run weekly on Monday at 5 AM UTC, except Groot which automerges immediately at any time.
+**Environment awareness:** PRs are labelled and branch-prefixed by environment based on file path (`clusters/dev/`, `clusters/staging/`, `clusters/prod/`). Minor and patch updates are tracked separately.
+
+**Digest pinning:** Internal Docker images in Flux cluster files **are** digest-pinned (unlike in app repos). This ensures cluster deployments are fully deterministic. The `flux` manager itself has digest pinning disabled because the inline `tag@digest` format is not valid in HelmRelease values — digest tracking is handled by the custom managers instead.
+
+**Auto-merge** (dev and staging environments only):
+
+| Update type | dev / staging | prod |
+|-------------|--------------|------|
+| Internal Docker patch | Auto-merge (CI required) | PR only |
+| Internal Docker minor | Auto-merge (CI required) | PR only |
+| Internal Docker pinDigest | Auto-merge (CI required) | PR only |
+| Internal Docker major | PR only | PR only |
+| External | PR only | PR only |
+
+Internal GHA patch and minor updates auto-merge across all repos (including Flux).
 
 ---
 
@@ -94,15 +173,15 @@ Supported fields in the comment:
 
 ### Dockerfile — internal images
 
-Internal images from `europe-docker.pkg.dev/mailerlitehub/` are tracked automatically — no annotation needed.
+Internal images from all GCP artifact registries are tracked automatically via the standard Dockerfile manager — no annotation needed.
 
 ```dockerfile
-FROM europe-docker.pkg.dev/mailerlitehub/octopus/octopus:1.2.3@sha256:abc123...
+FROM europe-docker.pkg.dev/mailerlitehub/octopus/octopus:1.2.3
 
-COPY --from=europe-docker.pkg.dev/mailerlitehub/swiss-army-knife/swiss-army-knife:1.0.0 /bin/tool /bin/tool
+COPY --from=europe-docker.pkg.dev/mailerlite-gcp/myimage/myimage:1.0.0 /bin/tool /bin/tool
 ```
 
-Both `FROM` and `COPY --from` are supported, with or without a digest.
+Internal images in Dockerfiles are **not** digest-pinned.
 
 ### Helm values — image field
 
