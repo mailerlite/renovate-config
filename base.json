@@ -34,7 +34,7 @@
         },
         {
             "description": "Internal Docker images from GCP artifact registry - no minimum release age, no digest pinning by default",
-            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215)/"],
+            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
             "matchDatasources": ["docker"],
             "minimumReleaseAge": "0 days",
             "pinDigests": false
@@ -48,7 +48,7 @@
         },
         {
             "description": "Phase 1: Label PRs that would auto-merge - internal Docker, patch/minor across all repos",
-            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215)/"],
+            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
             "matchDatasources": ["docker"],
             "matchUpdateTypes": ["patch", "minor"],
             "addLabels": ["automerge_test"]

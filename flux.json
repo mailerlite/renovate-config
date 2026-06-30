@@ -91,7 +91,7 @@
     "packageRules": [
         {
             "description": "Internal Docker images in Flux - enable digest pinning (overrides base default)",
-            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215)/"],
+            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
             "matchDatasources": ["docker"],
             "pinDigests": true
         },
@@ -149,7 +149,7 @@
         },
         {
             "description": "Auto-merge internal Docker updates in dev/staging - patch/minor/pinDigest",
-            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215)/"],
+            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
             "matchUpdateTypes": ["patch", "minor", "pinDigest"],
             "matchFileNames": ["**/clusters/dev/**", "**/clusters/staging/**"],
             "automerge": true
