@@ -44,11 +44,6 @@
             "enabled": false
         },
         {
-            "description": "Landings registry",
-            "matchPackagePatterns": ["^europe-docker.pkg.dev/mailerlite-v2/landings/landings"],
-            "registryUrls": ["https://europe-docker.pkg.dev/mailerlite-v2/"]
-        },
-        {
             "description": "Docker images - separate PRs per package",
             "matchDatasources": ["docker"],
             "addLabels": ["docker"],

@@ -27,6 +27,12 @@
             "pinDigests": false
         },
         {
+            "description": "mailerlite-v2 GCP registry - explicit registryUrl required for Renovate to query it correctly",
+            "matchPackagePatterns": ["^europe-docker.pkg.dev/mailerlite-v2/"],
+            "matchDatasources": ["docker"],
+            "registryUrls": ["https://europe-docker.pkg.dev/mailerlite-v2/"]
+        },
+        {
             "description": "Internal Docker images from GCP artifact registry - no minimum release age, no digest pinning by default",
             "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215)/"],
             "matchDatasources": ["docker"],
