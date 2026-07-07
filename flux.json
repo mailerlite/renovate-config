@@ -111,12 +111,19 @@
             "pinDigests": false
         },
         {
-            "description": "Helm and Docker - split by environment, separate minor/patch",
+            "description": "Helm and Docker - split by environment, separate minor/patch by default",
             "matchDatasources": ["helm", "docker"],
             "separateMinorPatch": true,
             "ignoreDeprecated": true,
             "additionalBranchPrefix": "{{#if (containsString packageFileDir 'clusters/staging')}}staging{{else}}{{#if (containsString packageFileDir 'clusters/dev')}}dev{{else}}{{#if (containsString packageFileDir 'clusters/prod')}}prod{{else}}{{#if (containsString packageFileDir 'base/')}}base{{/if}}{{/if}}{{/if}}{{/if}}-",
             "addLabels": ["{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"]
+        },
+        {
+            "description": "Internal Docker in dev/staging - no minor/patch split, both automerge so separation adds noise",
+            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
+            "matchDatasources": ["docker"],
+            "matchFileNames": ["**/clusters/dev/**", "**/clusters/staging/**"],
+            "separateMinorPatch": false
         },
         {
             "description": "Helm charts label",
@@ -152,7 +159,25 @@
             "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
             "matchUpdateTypes": ["patch", "minor", "pinDigest"],
             "matchFileNames": ["**/clusters/dev/**", "**/clusters/staging/**"],
-            "automerge": true
+            "automerge": true,
+            "addLabels": ["automerge"]
+        },
+        {
+            "description": "Auto-merge internal Docker patch/pinDigest in prod",
+            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
+            "matchUpdateTypes": ["patch", "pinDigest"],
+            "matchFileNames": ["**/clusters/prod/**", "**/clusters/production/**"],
+            "automerge": false,
+            "addLabels": ["automerge", "automerge_test"]
+        },
+        {
+            "description": "Auto-merge internal Docker minor in prod - 1 day buffer as soak gate",
+            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
+            "matchUpdateTypes": ["minor"],
+            "matchFileNames": ["**/clusters/prod/**", "**/clusters/production/**"],
+            "minimumReleaseAge": "1 day",
+            "automerge": false,
+            "addLabels": ["automerge", "automerge_test"]
         }
     ]
 }
