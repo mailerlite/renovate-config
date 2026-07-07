@@ -58,7 +58,7 @@
             "matchManagers": ["github-actions"],
             "matchPackagePatterns": ["^(mailerlite|mailersend|mailercheck)/"],
             "matchUpdateTypes": ["patch", "minor"],
-            "addLabels": ["automerge_test"]
+            "addLabels": ["automerge_test", "automerge"]
         },
         {
             "description": "Group digest-only pins into a single PR - no version changes",

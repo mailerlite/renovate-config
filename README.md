@@ -51,6 +51,7 @@ Packages are classified as **internal** or **external** based on their origin.
 | Docker | `europe-docker.pkg.dev/mailerlite-gcp/` |
 | Docker | `europe-docker.pkg.dev/mailercheck-usa/` |
 | Docker | `europe-docker.pkg.dev/mailersend-214215/` |
+| Docker | `europe-docker.pkg.dev/mailerlite-v2/` |
 | GitHub Actions / Releases | `mailerlite/*`, `mailersend/*`, `mailercheck/*` |
 
 Internal packages:
@@ -130,19 +131,21 @@ For Kubernetes Flux cluster repositories. Managers:
 | `custom.regex` | Annotated versions in cluster YAML |
 | `custom.jsonata` | app-template `image` fields (repository/tag/digest) |
 
-**Environment awareness:** PRs are labelled and branch-prefixed by environment based on file path (`clusters/dev/`, `clusters/staging/`, `clusters/prod/`). Minor and patch updates are tracked separately.
+**Environment awareness:** PRs are labelled and branch-prefixed by environment based on file path (`clusters/dev/`, `clusters/staging/`, `clusters/prod/`, `clusters/production/`). Minor and patch updates are split into separate PRs by default, except for internal Docker images in dev/staging where both auto-merge so the split adds no value.
 
 **Digest pinning:** Internal Docker images in Flux cluster files **are** digest-pinned (unlike in app repos). This ensures cluster deployments are fully deterministic. The `flux` manager itself has digest pinning disabled because the inline `tag@digest` format is not valid in HelmRelease values — digest tracking is handled by the custom managers instead.
 
-**Auto-merge** (dev and staging environments only):
+**Auto-merge:** PRs that auto-merge receive an `automerge` label.
 
 | Update type | dev / staging | prod |
 |-------------|--------------|------|
-| Internal Docker patch | Auto-merge (CI required) | PR only |
-| Internal Docker minor | Auto-merge (CI required) | PR only |
-| Internal Docker pinDigest | Auto-merge (CI required) | PR only |
+| Internal Docker patch | Auto-merge (CI required) | Auto-merge (CI required) |
+| Internal Docker minor | Auto-merge (CI required) | Auto-merge, 1 day buffer (CI required) |
+| Internal Docker pinDigest | Auto-merge (CI required) | Auto-merge (CI required) |
 | Internal Docker major | PR only | PR only |
 | External | PR only | PR only |
+
+The 1-day buffer on prod minor means by the time the PR is created, the change has already been running in dev/staging for at least a day via webhook — it acts as a natural soak gate.
 
 Internal GHA patch and minor updates auto-merge across all repos (including Flux).
 
