@@ -178,6 +178,20 @@
             "minimumReleaseAge": "1 day",
             "automerge": true,
             "addLabels": ["automerge"]
+        },
+        {
+            "description": "Explicitly disabled packages - add/remove package names here to manage the list",
+            "matchPackageNames": [
+                "europe-docker.pkg.dev/mailerlite-gcp/mailerlite/mailerlite-prod"
+            ],
+            "enabled": false
+        },
+        {
+            "description": "Packages that get PRs but must never auto-merge - add/remove package names here to manage the list",
+            "matchPackageNames": [
+                "europe-docker.pkg.dev/mailerlitehub/pgbouncer/pgbouncer"
+            ],
+            "automerge": false
         }
     ]
 }
