@@ -78,6 +78,14 @@
             "description": "images.yaml - one PR per package across all its tracked version slots",
             "matchFileNames": ["**/images.yaml"],
             "groupName": "{{depName}}"
+        },
+        {
+            "description": "Explicitly disabled packages - add/remove package names here to manage the list",
+            "matchPackageNames": [
+                "europe-docker.pkg.dev/mailerlitehub/pgbouncer/pgbouncer",
+                "europe-docker.pkg.dev/mailerlite-gcp/mailerlite/mailerlite-prod"
+            ],
+            "enabled": false
         }
     ],
     "enabledManagers": [
