@@ -167,8 +167,8 @@
             "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
             "matchUpdateTypes": ["patch", "pinDigest"],
             "matchFileNames": ["**/clusters/prod/**", "**/clusters/production/**"],
-            "automerge": false,
-            "addLabels": ["automerge", "automerge_test"]
+            "automerge": true,
+            "addLabels": ["automerge"]
         },
         {
             "description": "Auto-merge internal Docker minor in prod - 1 day buffer as soak gate",
@@ -176,8 +176,22 @@
             "matchUpdateTypes": ["minor"],
             "matchFileNames": ["**/clusters/prod/**", "**/clusters/production/**"],
             "minimumReleaseAge": "1 day",
-            "automerge": false,
-            "addLabels": ["automerge", "automerge_test"]
+            "automerge": true,
+            "addLabels": ["automerge"]
+        },
+        {
+            "description": "Explicitly disabled packages - add/remove package names here to manage the list",
+            "matchPackageNames": [
+                "europe-docker.pkg.dev/mailerlite-gcp/mailerlite/mailerlite-prod"
+            ],
+            "enabled": false
+        },
+        {
+            "description": "Packages that get PRs but must never auto-merge - add/remove package names here to manage the list",
+            "matchPackageNames": [
+                "europe-docker.pkg.dev/mailerlitehub/pgbouncer/pgbouncer"
+            ],
+            "automerge": false
         }
     ]
 }
