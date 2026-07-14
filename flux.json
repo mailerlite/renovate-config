@@ -155,17 +155,17 @@
             "matchUpdateTypes": ["minor"]
         },
         {
-            "description": "Auto-merge internal Docker updates in dev/staging - patch/minor/pinDigest",
+            "description": "Auto-merge internal Docker updates in dev/staging - patch/minor/digest/pinDigest",
             "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
-            "matchUpdateTypes": ["patch", "minor", "pinDigest"],
+            "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
             "matchFileNames": ["**/clusters/dev/**", "**/clusters/staging/**"],
             "automerge": true,
             "addLabels": ["automerge"]
         },
         {
-            "description": "Auto-merge internal Docker patch/pinDigest in prod",
+            "description": "Auto-merge internal Docker patch/digest/pinDigest in prod",
             "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
-            "matchUpdateTypes": ["patch", "pinDigest"],
+            "matchUpdateTypes": ["patch", "digest", "pinDigest"],
             "matchFileNames": ["**/clusters/prod/**", "**/clusters/production/**"],
             "automerge": true,
             "addLabels": ["automerge"]
