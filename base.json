@@ -50,7 +50,7 @@
             "description": "Internal Docker patch/minor - auto-merge across all repos",
             "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
             "matchDatasources": ["docker"],
-            "matchUpdateTypes": ["patch", "minor"],
+            "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
             "automerge": true,
             "addLabels": ["automerge"]
         },
