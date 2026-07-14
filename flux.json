@@ -182,7 +182,8 @@
         {
             "description": "Explicitly disabled packages - add/remove package names here to manage the list",
             "matchPackageNames": [
-                "europe-docker.pkg.dev/mailerlite-gcp/mailerlite/mailerlite-prod"
+                "europe-docker.pkg.dev/mailerlite-gcp/mailerlite/mailerlite-prod",
+                "europe-docker.pkg.dev/mailersend-214215/mailersend/mailersend"
             ],
             "enabled": false
         },
