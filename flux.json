@@ -192,7 +192,8 @@
             "matchPackageNames": [
                 "europe-docker.pkg.dev/mailerlitehub/pgbouncer/pgbouncer"
             ],
-            "automerge": false
+            "automerge": false,
+            "removeLabels": ["automerge"]
         }
     ]
 }
