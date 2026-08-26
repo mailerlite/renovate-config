@@ -1,0 +1,246 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "github>mailerlite/renovate-config:base"
+    ],
+    "enabledManagers": [
+        "custom.regex",
+        "custom.jsonata",
+        "github-actions",
+        "kubernetes",
+        "flux"
+    ],
+    "ignorePaths": [
+        "**/templates/**",
+        "**/.taskfiles/**"
+    ],
+    "kubernetes": {
+        "managerFilePatterns": ["/\\.ya?ml$/"]
+    },
+    "flux": {
+        "managerFilePatterns": ["/\\.ya?ml$/"]
+    },
+    "customManagers": [
+        {
+            "description": "Helm chart pinned via annotation with an explicit datasource (OCI charts)",
+            "customType": "regex",
+            "managerFilePatterns": ["/\\.ya?ml$/"],
+            "matchStrings": [
+                "# renovate: datasource=(?<datasource>\\S+) registryUrl=(?<registryUrl>\\S+) chart=(?<depName>\\S+)[^\\n]*\\n[^\\n]*version:\\s*[\"']?(?<currentValue>[^\"'\\s]+)"
+            ],
+            "depTypeTemplate": "helm-oci"
+        },
+        {
+            "description": "Helm chart version behind an envsubst default, e.g. version: \"${RELOADER_VERSION:=2.2.11}\". No datasource= in the annotation, which is what separates it from the OCI form above.",
+            "customType": "regex",
+            "managerFilePatterns": ["/\\.ya?ml$/"],
+            "matchStrings": [
+                "# renovate: registryUrl=(?<registryUrl>\\S+) chart=(?<depName>\\S+)[^\\n]*\\n[^\\n]*version:\\s*[\"']?\\$\\{[A-Za-z0-9_]+:=(?<currentValue>[^}\"'\\s]+)\\}"
+            ],
+            "datasourceTemplate": "helm",
+            "versioningTemplate": "helm",
+            "depTypeTemplate": "helm-envsubst"
+        },
+        {
+            "description": "Image tag or image reference pinned via annotation, for CRDs and HelmRelease values the built-in managers cannot read. Tolerates quotes and YAML anchors, e.g. tag: &version v1.2.16",
+            "customType": "regex",
+            "managerFilePatterns": ["/\\.ya?ml$/"],
+            "matchStrings": [
+                "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)[^\\n]*\\n(?:[^\\n]*\\n)?[^\\n]*tag:\\s*(?:&\\S+\\s+)?[\"']?(?<currentValue>[^\"'\\s@]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?",
+                "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)[^\\n]*\\n[^\\n]*image:\\s*[\"']?[^\\s\"':]+:(?<currentValue>[^\"'\\s@]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
+            ]
+        },
+        {
+            "description": "Remote release artifact pulled straight into a Kustomization, e.g. gateway-api standard-install.yaml",
+            "customType": "regex",
+            "managerFilePatterns": ["/\\.ya?ml$/"],
+            "matchStrings": [
+                "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)[^\\n]*\\n[^\\n]*https://github\\.com/[^/\\s]+/[^/\\s]+/releases/download/(?<currentValue>[^/\\s]+)/"
+            ],
+            "depTypeTemplate": "remote-manifest"
+        },
+        {
+            "description": "app-template: repository+tag+digest - write digest to separate digest field",
+            "customType": "jsonata",
+            "fileFormat": "yaml",
+            "managerFilePatterns": ["/\\.ya?ml$/"],
+            "matchStrings": [
+                "**.image[$exists(repository) and $exists(tag) and $exists(digest)].{ \"depName\": $exists($.registry) ? $.registry & \"/\" & $.repository : $.repository, \"currentValue\": $.tag, \"currentDigest\": $.digest }"
+            ],
+            "datasourceTemplate": "docker",
+            "depTypeTemplate": "app-template-with-digest"
+        },
+        {
+            "description": "app-template: repository+tag without digest - write digest inline with tag",
+            "customType": "jsonata",
+            "fileFormat": "yaml",
+            "managerFilePatterns": ["/\\.ya?ml$/"],
+            "matchStrings": [
+                "**.image[$exists(repository) and $exists(tag) and $not($exists(digest))].{ \"depName\": $exists($.registry) ? $.registry & \"/\" & $.repository : $.repository, \"currentValue\": $substringBefore($.tag, \"@\"), \"currentDigest\": $contains($.tag, \"@\") ? $substringAfter($.tag, \"@\") : \"\" }"
+            ],
+            "datasourceTemplate": "docker",
+            "depTypeTemplate": "app-template-inline-digest"
+        },
+        {
+            "customType": "regex",
+            "managerFilePatterns": ["/^\\.pre-commit-config\\.ya?ml$/"],
+            "matchStrings": [
+                "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)?\n.*?rev: .*?(?<currentValue>.*)"
+            ]
+        }
+    ],
+    "packageRules": [
+        {
+            "description": [
+                "Nothing auto-merges in fleet repos yet. This overrides the auto-merge rules",
+                "inherited from base, which stay in effect for every other repo.",
+                "The rules further down still apply the `automerge` label so the policy can",
+                "be reviewed on live PRs. To go live, delete this rule."
+            ],
+            "matchPackageNames": ["*"],
+            "automerge": false
+        },
+        {
+            "description": "Internal Docker images in a cluster repo - digest pin so deployments are deterministic (overrides the base default)",
+            "matchDatasources": ["docker"],
+            "matchPackageNames": [
+                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//"
+            ],
+            "pinDigests": true
+        },
+        {
+            "description": "flux manager - no digest pinning, the inline tag@digest format is not valid in a HelmRelease, the custom managers handle it",
+            "matchManagers": ["flux"],
+            "pinDigests": false
+        },
+        {
+            "description": "app-template images with a dedicated digest field - pin, so the digest field moves with the tag",
+            "matchDepTypes": ["app-template-with-digest"],
+            "pinDigests": true
+        },
+        {
+            "description": "Chart versions and remote manifests are not images - never digest pin them",
+            "matchDepTypes": ["helm-oci", "helm-envsubst", "remote-manifest"],
+            "pinDigests": false
+        },
+        {
+            "description": "Helm and Docker - keep minor and patch in separate PRs, skip deprecated charts",
+            "matchDatasources": ["helm", "docker"],
+            "separateMinorPatch": true,
+            "ignoreDeprecated": true
+        },
+        {
+            "description": "dev environment - own branch prefix so it never shares a PR with production",
+            "matchFileNames": ["dev/**"],
+            "additionalBranchPrefix": "dev-",
+            "addLabels": ["dev"]
+        },
+        {
+            "description": "production environment - own branch prefix so it never shares a PR with dev",
+            "matchFileNames": ["production/**"],
+            "additionalBranchPrefix": "production-",
+            "addLabels": ["production"]
+        },
+        {
+            "description": "core layer - rolls out to every cluster in the environment at once",
+            "matchFileNames": ["*/core/**"],
+            "addLabels": ["core"]
+        },
+        {
+            "description": "Flux bootstrap - the thing that applies everything else",
+            "matchFileNames": ["*/clusters/**"],
+            "addLabels": ["flux-system"]
+        },
+        {
+            "description": "Cluster labels - a PR shared by several clusters carries one label per cluster it touches",
+            "matchFileNames": ["*/workloads/app/**", "*/clusters/app/**"],
+            "addLabels": ["cluster/app"]
+        },
+        {
+            "matchFileNames": ["*/workloads/monitoring/**", "*/clusters/monitoring/**"],
+            "addLabels": ["cluster/monitoring"]
+        },
+        {
+            "matchFileNames": ["*/workloads/clickhouse/**", "*/clusters/clickhouse/**"],
+            "addLabels": ["cluster/clickhouse"]
+        },
+        {
+            "matchFileNames": ["*/workloads/elasticsearch/**", "*/clusters/elasticsearch/**"],
+            "addLabels": ["cluster/elasticsearch"]
+        },
+        {
+            "description": "Helm charts label",
+            "matchDatasources": ["helm"],
+            "addLabels": ["helm"]
+        },
+        {
+            "description": "Docker images label",
+            "matchDatasources": ["docker"],
+            "addLabels": ["docker"]
+        },
+        {
+            "description": "VictoriaMetrics label",
+            "matchPackageNames": ["/victoria[-]?(metrics|logs|traces)/"],
+            "addLabels": ["VictoriaMetrics"]
+        },
+        {
+            "description": "istio base and istiod are one release and span two clusters - never let them drift apart",
+            "matchDatasources": ["helm", "docker"],
+            "matchDepNames": ["base", "istiod", "gateway"],
+            "groupName": "istio"
+        },
+        {
+            "description": "app-template patch updates",
+            "groupName": "app-template patch dependencies",
+            "groupSlug": "app-template-patch",
+            "matchPackageNames": ["app-template", "/bjw-charts/app-template$/"],
+            "matchUpdateTypes": ["patch"]
+        },
+        {
+            "description": "app-template minor updates",
+            "groupName": "app-template minor dependencies",
+            "groupSlug": "app-template-minor",
+            "matchPackageNames": ["app-template", "/bjw-charts/app-template$/"],
+            "matchUpdateTypes": ["minor"]
+        },
+        {
+            "description": "dev, internal images - auto-merge candidate: patch, minor and digest rebuilds",
+            "matchDatasources": ["docker"],
+            "matchPackageNames": [
+                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//"
+            ],
+            "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
+            "matchFileNames": ["dev/workloads/**", "dev/core/**"],
+            "addLabels": ["automerge"]
+        },
+        {
+            "description": "production, internal images - auto-merge candidate: patch and digest rebuilds only",
+            "matchDatasources": ["docker"],
+            "matchPackageNames": [
+                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//"
+            ],
+            "matchUpdateTypes": ["patch", "digest", "pinDigest"],
+            "matchFileNames": ["production/workloads/**", "production/core/**"],
+            "addLabels": ["automerge"]
+        },
+        {
+            "description": "production, internal images - minor bumps soak in dev for a day first",
+            "matchDatasources": ["docker"],
+            "matchPackageNames": [
+                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//"
+            ],
+            "matchUpdateTypes": ["minor"],
+            "matchFileNames": ["production/workloads/**", "production/core/**"],
+            "minimumReleaseAge": "1 day",
+            "addLabels": ["automerge"]
+        },
+        {
+            "description": "Explicitly disabled packages - add/remove package names here to manage the list",
+            "matchPackageNames": [
+                "europe-docker.pkg.dev/mailerlite-gcp/mailerlite/mailerlite-prod",
+                "europe-docker.pkg.dev/mailersend-214215/mailersend/mailersend"
+            ],
+            "enabled": false
+        }
+    ]
+}

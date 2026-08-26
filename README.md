@@ -7,8 +7,9 @@ Shared [Renovate](https://docs.renovatebot.com/) configurations for MailerLite r
 | Config | Purpose |
 |--------|---------|
 | `base` | Common defaults inherited by all configs |
-| `app` | Application/microservice repositories |
-| `flux` | Kubernetes Flux cluster repositories |
+| `app`  | Application/microservice repositories |
+| `flux`  | Kubernetes Flux cluster repositories |
+| `fleet` | Kubernetes Flux Fleet cluster repositories |
 
 ---
 
@@ -27,6 +28,13 @@ Add a `.github/renovate.json` to your repository and extend the appropriate conf
 ```json
 {
   "extends": ["github>mailerlite/renovate-config:flux"]
+}
+```
+
+**Flux Fleet cluster repo:**
+```json
+{
+  "extends": ["github>mailerlite/renovate-config:fleet"]
 }
 ```
 
