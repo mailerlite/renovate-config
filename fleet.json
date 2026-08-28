@@ -91,12 +91,7 @@
     ],
     "packageRules": [
         {
-            "description": [
-                "Nothing auto-merges in fleet repos yet. This overrides the auto-merge rules",
-                "inherited from base, which stay in effect for every other repo.",
-                "The rules further down still apply the `automerge` label so the policy can",
-                "be reviewed on live PRs. To go live, delete this rule."
-            ],
+            "description": "Automerge is disabled everywhere - explicit safety net for fleet repos",
             "matchPackageNames": ["*"],
             "automerge": false
         },
@@ -204,26 +199,6 @@
             "matchUpdateTypes": ["minor"]
         },
         {
-            "description": "dev, internal images - auto-merge candidate: patch, minor and digest rebuilds",
-            "matchDatasources": ["docker"],
-            "matchPackageNames": [
-                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//"
-            ],
-            "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
-            "matchFileNames": ["dev/workloads/**", "dev/core/**"],
-            "addLabels": ["automerge"]
-        },
-        {
-            "description": "production, internal images - auto-merge candidate: patch and digest rebuilds only",
-            "matchDatasources": ["docker"],
-            "matchPackageNames": [
-                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//"
-            ],
-            "matchUpdateTypes": ["patch", "digest", "pinDigest"],
-            "matchFileNames": ["production/workloads/**", "production/core/**"],
-            "addLabels": ["automerge"]
-        },
-        {
             "description": "production, internal images - minor bumps soak in dev for a day first",
             "matchDatasources": ["docker"],
             "matchPackageNames": [
@@ -231,8 +206,7 @@
             ],
             "matchUpdateTypes": ["minor"],
             "matchFileNames": ["production/workloads/**", "production/core/**"],
-            "minimumReleaseAge": "1 day",
-            "addLabels": ["automerge"]
+            "minimumReleaseAge": "1 day"
         },
         {
             "description": "Explicitly disabled packages - add/remove package names here to manage the list",

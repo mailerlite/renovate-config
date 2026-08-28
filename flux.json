@@ -120,7 +120,7 @@
             "addLabels": ["{{#if (containsString packageFileDir 'clusters/staging')}}staging{{/if}}", "{{#if (containsString packageFileDir 'clusters/dev')}}dev{{/if}}", "{{#if (containsString packageFileDir 'clusters/prod')}}prod{{/if}}", "{{#if (containsString packageFileDir 'base/')}}base{{/if}}"]
         },
         {
-            "description": "Internal Docker in dev/staging - no minor/patch split, both automerge so separation adds noise",
+            "description": "Internal Docker in dev/staging - no minor/patch split, separation adds noise",
             "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
             "matchDatasources": ["docker"],
             "matchFileNames": ["**/clusters/dev/**", "**/clusters/staging/**"],
@@ -156,26 +156,11 @@
             "matchUpdateTypes": ["minor"]
         },
         {
-            "description": "Auto-merge internal Docker updates in dev/staging - patch/minor/digest/pinDigest",
-            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
-            "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
-            "matchFileNames": ["**/clusters/dev/**", "**/clusters/staging/**"],
-            "addLabels": ["automerge"]
-        },
-        {
-            "description": "Auto-merge internal Docker patch/digest/pinDigest in prod",
-            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
-            "matchUpdateTypes": ["patch", "digest", "pinDigest"],
-            "matchFileNames": ["**/clusters/prod/**", "**/clusters/production/**"],
-            "addLabels": ["automerge"]
-        },
-        {
-            "description": "Auto-merge internal Docker minor in prod - 1 day buffer as soak gate",
+            "description": "Internal Docker minor in prod - 1 day buffer as soak gate",
             "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
             "matchUpdateTypes": ["minor"],
             "matchFileNames": ["**/clusters/prod/**", "**/clusters/production/**"],
-            "minimumReleaseAge": "1 day",
-            "addLabels": ["automerge"]
+            "minimumReleaseAge": "1 day"
         },
         {
             "description": "Explicitly disabled packages - add/remove package names here to manage the list",
@@ -184,13 +169,6 @@
                 "europe-docker.pkg.dev/mailersend-214215/mailersend/mailersend"
             ],
             "enabled": false
-        },
-        {
-            "description": "Packages that get PRs but must never auto-merge - add/remove package names here to manage the list",
-            "matchPackageNames": [
-                "europe-docker.pkg.dev/mailerlitehub/pgbouncer/pgbouncer"
-            ],
-            "removeLabels": ["automerge"]
         }
     ]
 }
