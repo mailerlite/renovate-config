@@ -205,8 +205,7 @@
                 "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//"
             ],
             "matchUpdateTypes": ["minor"],
-            "matchFileNames": ["production/workloads/**", "production/core/**"],
-            "minimumReleaseAge": "1 day"
+            "matchFileNames": ["production/workloads/**", "production/core/**"]
         },
         {
             "description": "Explicitly disabled packages - add/remove package names here to manage the list",

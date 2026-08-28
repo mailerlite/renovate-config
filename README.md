@@ -144,8 +144,6 @@ For Kubernetes Flux cluster repositories. Managers:
 
 **Auto-merge is disabled everywhere.** All updates, internal or external, create a PR for manual review.
 
-Internal Docker minor updates in prod still carry a 1-day `minimumReleaseAge` buffer, so by the time the PR is created the change has already been running in dev/staging for at least a day via webhook — a soak gate, independent of merging.
-
 ---
 
 ## Annotations
