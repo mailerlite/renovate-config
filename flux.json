@@ -160,7 +160,6 @@
             "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
             "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
             "matchFileNames": ["**/clusters/dev/**", "**/clusters/staging/**"],
-            "automerge": true,
             "addLabels": ["automerge"]
         },
         {
@@ -168,7 +167,6 @@
             "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
             "matchUpdateTypes": ["patch", "digest", "pinDigest"],
             "matchFileNames": ["**/clusters/prod/**", "**/clusters/production/**"],
-            "automerge": true,
             "addLabels": ["automerge"]
         },
         {
@@ -177,7 +175,6 @@
             "matchUpdateTypes": ["minor"],
             "matchFileNames": ["**/clusters/prod/**", "**/clusters/production/**"],
             "minimumReleaseAge": "1 day",
-            "automerge": true,
             "addLabels": ["automerge"]
         },
         {
@@ -193,7 +190,6 @@
             "matchPackageNames": [
                 "europe-docker.pkg.dev/mailerlitehub/pgbouncer/pgbouncer"
             ],
-            "automerge": false,
             "removeLabels": ["automerge"]
         }
     ]
