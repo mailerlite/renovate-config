@@ -184,13 +184,28 @@ Supported fields in the comment:
 
 ### Dockerfile — internal images
 
-Internal images from all GCP artifact registries are tracked automatically via the standard Dockerfile manager — no annotation needed.
+Internal images from all GCP artifact registries are tracked automatically — no annotation needed. `mailerlitehub` images (including all `base-images/*`) are handled by the `app` preset's custom regex managers; images from the other registries by the standard Dockerfile manager.
 
 ```dockerfile
 FROM europe-docker.pkg.dev/mailerlitehub/octopus/octopus:1.2.3
 
 COPY --from=europe-docker.pkg.dev/mailerlite-gcp/myimage/myimage:1.0.0 /bin/tool /bin/tool
 ```
+
+For `mailerlitehub` images the image reference is detected in `FROM`, `COPY --from=` and `ARG <NAME>=` lines:
+
+```dockerfile
+# Literal tag - the whole tag is tracked, the language suffix (-1.26) is kept as is
+ARG BASE_IMAGE=europe-docker.pkg.dev/mailerlitehub/base-images/go:v1.0.34-1.26
+FROM ${BASE_IMAGE} AS build
+
+# Tag ending in a build arg - only the version before the variable is tracked,
+# v1.1.4 is bumped and -${PHP_VERSION} is left untouched
+ARG PHP_VERSION=8.4
+FROM europe-docker.pkg.dev/mailerlitehub/base-images/php-apps:v1.1.4-${PHP_VERSION} AS base
+```
+
+Base images are tagged `v<semver>-<language version>`. Legacy tags such as `go-v1.0.8-1.26` or `base-v1.0.14` are not valid versions and will not receive updates — switch them to the `v1.0.x-…` form once by hand.
 
 Internal images in Dockerfiles are **not** digest-pinned.
 
