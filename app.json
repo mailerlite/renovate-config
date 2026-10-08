@@ -21,12 +21,22 @@
         },
         {
             "customType": "regex",
+            "description": "Internal mailerlitehub images with a literal tag, e.g. FROM .../base-images/go:v1.0.34-1.26 or ARG BASE_IMAGE=.../base-images/base:v1.0.42",
             "managerFilePatterns": ["/Dockerfile(\\.[\\w-]+)?$/"],
             "matchStrings": [
-                "(?:FROM|COPY --from=)(?:.*?/mailerlitehub/)(?<depName>[a-z0-9./-]+)(?::(?<currentValue>[a-z0-9.-]+))?(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
+                "(?:FROM\\s+(?:--\\S+\\s+)*|COPY\\s+--from=|ARG\\s+\\w+=)[\"']?(?<depName>[a-z0-9.-]+\\.pkg\\.dev/mailerlitehub/[a-z0-9._/-]+)(?::(?<currentValue>[\\w.-]+))?(?:@(?<currentDigest>sha256:[a-f0-9]+))?[\"']?\\s"
+            ],
+            "datasourceTemplate": "docker"
+        },
+        {
+            "customType": "regex",
+            "description": "Internal mailerlitehub images whose tag ends in a build arg, e.g. FROM .../base-images/php-apps:v1.1.4-${PHP_VERSION} - only the version before the variable is tracked and updated",
+            "managerFilePatterns": ["/Dockerfile(\\.[\\w-]+)?$/"],
+            "matchStrings": [
+                "(?:FROM\\s+(?:--\\S+\\s+)*|COPY\\s+--from=|ARG\\s+\\w+=)[\"']?(?<depName>[a-z0-9.-]+\\.pkg\\.dev/mailerlitehub/[a-z0-9._/-]+):(?<currentValue>v?[0-9]+(?:\\.[0-9]+)*)-\\$\\{?\\w+\\}?"
             ],
             "datasourceTemplate": "docker",
-            "registryUrlTemplate": "https://europe-docker.pkg.dev/mailerlitehub/"
+            "extractVersionTemplate": "^(?<version>v?[0-9]+(?:\\.[0-9]+)*)-"
         },
         {
             "customType": "regex",
