@@ -143,7 +143,7 @@ For Kubernetes Flux cluster repositories. Managers:
 
 **Digest pinning:** Internal Docker images in Flux cluster files **are** digest-pinned (unlike in app repos). This ensures cluster deployments are fully deterministic. The `flux` manager itself has digest pinning disabled because the inline `tag@digest` format is not valid in HelmRelease values — digest tracking is handled by the custom managers instead.
 
-**Auto-merge:** PRs that auto-merge receive an `automerge` label.
+**Auto-merge:** PRs that auto-merge receive an `automerge` label. In `fleet` repos only dev internal Docker images auto-merge for now; prod rows get the label but still need a manual merge.
 
 | Update type | dev / staging | prod |
 |-------------|--------------|------|

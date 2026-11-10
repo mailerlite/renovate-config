@@ -92,10 +92,10 @@
     "packageRules": [
         {
             "description": [
-                "Nothing auto-merges in fleet repos yet. This overrides the auto-merge rules",
-                "inherited from base, which stay in effect for every other repo.",
-                "The rules further down still apply the `automerge` label so the policy can",
-                "be reviewed on live PRs. To go live, delete this rule."
+                "Default off in fleet repos. This overrides the auto-merge rules inherited",
+                "from base, which stay in effect for every other repo.",
+                "Rules further down opt back in: dev internal images auto-merge, production",
+                "rules only apply the `automerge` label for now."
             ],
             "matchPackageNames": ["*"],
             "automerge": false
@@ -211,7 +211,8 @@
             ],
             "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
             "matchFileNames": ["dev/workloads/**", "dev/core/**"],
-            "addLabels": ["automerge"]
+            "addLabels": ["automerge"],
+            "automerge": true
         },
         {
             "description": "production, internal images - auto-merge candidate: patch and digest rebuilds only",
