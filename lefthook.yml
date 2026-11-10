@@ -4,3 +4,4 @@ remotes:
     ref: main
     configs:
       - gitleaks.yml
+      - zizmor.yml
