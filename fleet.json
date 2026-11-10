@@ -215,6 +215,16 @@
             "automerge": true
         },
         {
+            "description": "production, internal images - keep patch and minor in the same group PR (overrides separateMinorPatch above). Separate rule because separateMinorPatch cannot be combined with matchUpdateTypes.",
+            "matchDatasources": ["docker"],
+            "matchPackageNames": [
+                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//",
+                "!europe-docker.pkg.dev/mailerlitehub/bjw-charts/**"
+            ],
+            "matchFileNames": ["production/workloads/**", "production/core/**"],
+            "separateMinorPatch": false
+        },
+        {
             "description": [
                 "production, internal images - one grouped PR per repo, merged by Renovate itself on a later daily run, so prod lands ~1-2 days after dev.",
                 "platformAutomerge is off on purpose: GitHub would merge as soon as checks pass. Renovate merges at most one PR per run, hence the group.",
@@ -229,7 +239,6 @@
             "matchFileNames": ["production/workloads/**", "production/core/**"],
             "groupName": "production internal images",
             "groupSlug": "internal-images",
-            "separateMinorPatch": false,
             "automerge": true,
             "platformAutomerge": false,
             "addLabels": ["automerge"]
