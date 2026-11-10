@@ -92,10 +92,9 @@
     "packageRules": [
         {
             "description": [
-                "Nothing auto-merges in fleet repos yet. This overrides the auto-merge rules",
-                "inherited from base, which stay in effect for every other repo.",
-                "The rules further down still apply the `automerge` label so the policy can",
-                "be reviewed on live PRs. To go live, delete this rule."
+                "Default off in fleet repos. This overrides the auto-merge rules inherited",
+                "from base, which stay in effect for every other repo.",
+                "The dev and production internal image rules further down opt back in."
             ],
             "matchPackageNames": ["*"],
             "automerge": false
@@ -204,34 +203,44 @@
             "matchUpdateTypes": ["minor"]
         },
         {
-            "description": "dev, internal images - auto-merge candidate: patch, minor and digest rebuilds",
+            "description": "dev, internal images - auto-merge patch, minor and digest rebuilds. The app-template chart is excluded, one bump changes every app-template workload at once.",
             "matchDatasources": ["docker"],
             "matchPackageNames": [
-                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//"
+                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//",
+                "!europe-docker.pkg.dev/mailerlitehub/bjw-charts/**"
             ],
             "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
             "matchFileNames": ["dev/workloads/**", "dev/core/**"],
-            "addLabels": ["automerge"]
+            "addLabels": ["automerge"],
+            "automerge": true
         },
         {
-            "description": "production, internal images - auto-merge candidate: patch and digest rebuilds only",
+            "description": "production, internal images - keep patch and minor in the same group PR (overrides separateMinorPatch above). Separate rule because separateMinorPatch cannot be combined with matchUpdateTypes.",
             "matchDatasources": ["docker"],
             "matchPackageNames": [
-                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//"
+                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//",
+                "!europe-docker.pkg.dev/mailerlitehub/bjw-charts/**"
             ],
-            "matchUpdateTypes": ["patch", "digest", "pinDigest"],
             "matchFileNames": ["production/workloads/**", "production/core/**"],
-            "addLabels": ["automerge"]
+            "separateMinorPatch": false
         },
         {
-            "description": "production, internal images - minor bumps soak in dev for a day first",
+            "description": [
+                "production, internal images - one grouped PR per repo, merged by Renovate itself on a later daily run, so prod lands ~1-2 days after dev.",
+                "platformAutomerge is off on purpose: GitHub would merge as soon as checks pass. Renovate merges at most one PR per run, hence the group.",
+                "No minimumReleaseAge: GAR has no release timestamps, so any age holds the update forever. The app-template chart is excluded."
+            ],
             "matchDatasources": ["docker"],
             "matchPackageNames": [
-                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//"
+                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//",
+                "!europe-docker.pkg.dev/mailerlitehub/bjw-charts/**"
             ],
-            "matchUpdateTypes": ["minor"],
+            "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
             "matchFileNames": ["production/workloads/**", "production/core/**"],
-            "minimumReleaseAge": "1 day",
+            "groupName": "production internal images",
+            "groupSlug": "internal-images",
+            "automerge": true,
+            "platformAutomerge": false,
             "addLabels": ["automerge"]
         },
         {
