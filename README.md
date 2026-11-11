@@ -143,7 +143,7 @@ For Kubernetes Flux cluster repositories. Managers:
 
 **Digest pinning:** Internal Docker images in Flux cluster files **are** digest-pinned (unlike in app repos). This ensures cluster deployments are fully deterministic. The `flux` manager itself has digest pinning disabled because the inline `tag@digest` format is not valid in HelmRelease values — digest tracking is handled by the custom managers instead.
 
-**Auto-merge:** PRs that auto-merge receive an `automerge` label. In `fleet` repos dev internal Docker images auto-merge as soon as checks pass. Prod internal Docker updates (patch, minor, digest) go into one grouped PR per repo that Renovate merges itself on a later daily run, so prod lands ~1-2 days after dev. `minimumReleaseAge` is not used there because GAR has no release timestamps. The app-template chart is excluded in both environments.
+**Auto-merge:** PRs that auto-merge receive an `automerge` label. In `fleet` repos dev internal Docker images auto-merge as soon as checks pass. Prod internal Docker updates (patch, minor, digest) get one PR each, which Renovate merges itself on a later daily run, so prod lands ~1-2 days after dev. Renovate merges at most one PR per repo per run, so several prod updates land one run apart. `minimumReleaseAge` is not used there because GAR has no release timestamps. The app-template chart is excluded in both environments.
 
 | Update type | dev / staging | prod |
 |-------------|--------------|------|
