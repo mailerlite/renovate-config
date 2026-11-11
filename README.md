@@ -8,8 +8,8 @@ Shared [Renovate](https://docs.renovatebot.com/) configurations for MailerLite r
 |--------|---------|
 | `base` | Common defaults inherited by all configs |
 | `app`  | Application/microservice repositories |
-| `flux`  | Kubernetes Flux cluster repositories |
-| `fleet` | Kubernetes Flux Fleet cluster repositories |
+| `fleet` | Every Kubernetes Flux cluster repository |
+| `flux`  | Deprecated, being replaced by `fleet`. Don't use it in new repos |
 
 ---
 
@@ -25,13 +25,6 @@ Add a `.github/renovate.json` to your repository and extend the appropriate conf
 ```
 
 **Flux cluster repo:**
-```json
-{
-  "extends": ["github>mailerlite/renovate-config:flux"]
-}
-```
-
-**Flux Fleet cluster repo:**
 ```json
 {
   "extends": ["github>mailerlite/renovate-config:fleet"]
@@ -127,9 +120,9 @@ Internal Docker images in Dockerfiles and compose files are **not** digest-pinne
 
 Internal GHA patch and minor updates auto-merge. All other updates create a PR.
 
-### flux
+### fleet
 
-For Kubernetes Flux cluster repositories. Managers:
+For every Kubernetes Flux cluster repository. Supports both layouts: `dev/` + `production/` (the `clusters-fleet` repos) and `clusters/staging/` + `clusters/production/` + `base/` (`clusters-classic`). `clusters-hub` (`cluster/`) has no environment. `flux` is the old preset for the second layout and is being removed. Managers:
 
 | Manager | What it tracks |
 |---------|---------------|
@@ -139,23 +132,11 @@ For Kubernetes Flux cluster repositories. Managers:
 | `custom.regex` | Annotated versions in cluster YAML |
 | `custom.jsonata` | app-template `image` fields (repository/tag/digest) |
 
-**Environment awareness:** PRs are labelled and branch-prefixed by environment based on file path (`clusters/dev/`, `clusters/staging/`, `clusters/prod/`, `clusters/production/`). Minor and patch updates are split into separate PRs by default, except for internal Docker images in dev/staging where both auto-merge so the split adds no value.
+**Environment awareness:** PRs are labelled and branch-prefixed by environment based on file path: `dev`, `staging`, `production` and `base`. Minor and patch updates are always separate PRs.
 
 **Digest pinning:** Internal Docker images in Flux cluster files **are** digest-pinned (unlike in app repos). This ensures cluster deployments are fully deterministic. The `flux` manager itself has digest pinning disabled because the inline `tag@digest` format is not valid in HelmRelease values — digest tracking is handled by the custom managers instead.
 
-**Auto-merge:** PRs that auto-merge receive an `automerge` label. In `fleet` repos dev internal Docker images auto-merge as soon as checks pass. Prod internal Docker updates (patch, minor, digest) get one PR each, which Renovate merges itself on a later daily run, so prod lands ~1-2 days after dev. Renovate merges at most one PR per repo per run, so several prod updates land one run apart. `minimumReleaseAge` is not used there because GAR has no release timestamps. The app-template chart is excluded in both environments.
-
-| Update type | dev / staging | prod |
-|-------------|--------------|------|
-| Internal Docker patch | Auto-merge (CI required) | Auto-merge (CI required) |
-| Internal Docker minor | Auto-merge (CI required) | Auto-merge, 1 day buffer (CI required) |
-| Internal Docker pinDigest | Auto-merge (CI required) | Auto-merge (CI required) |
-| Internal Docker major | PR only | PR only |
-| External | PR only | PR only |
-
-The 1-day buffer on prod minor means by the time the PR is created, the change has already been running in dev/staging for at least a day via webhook — it acts as a natural soak gate.
-
-Internal GHA patch and minor updates auto-merge across all repos (including Flux).
+**Auto-merge:** paused. Nothing in `fleet` repos auto-merges. The dev/staging and production internal image rules still add the `automerge` label, so the PRs show what would auto-merge once it is turned back on. `pgbouncer` never auto-merges.
 
 ---
 
