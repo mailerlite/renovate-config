@@ -1,0 +1,41 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "github>mailerlite/renovate-config:app",
+        ":ignoreModulesAndTests"
+    ],
+    "enabledManagers": [
+        "custom.regex",
+        "dockerfile",
+        "docker-compose",
+        "helmv3",
+        "github-actions",
+        "gomod",
+        "npm",
+        "composer",
+        "pep621",
+        "pip_requirements",
+        "poetry",
+        "bundler",
+        "cargo"
+    ],
+    "packageRules": [
+        {
+            "description": [
+                "Base images (mailerlitehub/base-images/* and the trixie-node images from mailerlite/containers) - auto-merge patch, minor and digest bumps on weekdays once checks pass.",
+                "base-docker-images rebuilds on Monday 01:00 UTC, Renovate opens these PRs on Monday morning, and merging them before the service's weekly release on Tuesday ships the new base.",
+                "Everything else (Go/npm/composer/... packages, other images, GitHub Actions) gets a PR and never auto-merges."
+            ],
+            "matchDatasources": ["docker"],
+            "matchPackageNames": [
+                "/^europe-docker\\.pkg\\.dev\\/mailerlitehub\\/base-images\\//",
+                "/^europe-docker\\.pkg\\.dev\\/mailerlitehub\\/containers\\/trixie-node-/"
+            ],
+            "matchUpdateTypes": ["patch", "minor", "digest"],
+            "schedule": ["* * * * 1-5"],
+            "automergeSchedule": ["* * * * 1-5"],
+            "addLabels": ["automerge"],
+            "automerge": true
+        }
+    ]
+}

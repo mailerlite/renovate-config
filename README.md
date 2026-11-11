@@ -7,6 +7,7 @@ Shared [Renovate](https://docs.renovatebot.com/) configurations for MailerLite r
 | Config | Purpose |
 |--------|---------|
 | `base` | Common defaults inherited by all configs |
+| `service` | SRE-run services and containers that build on our base images: auto-merges base image bumps |
 | `app`  | Application/microservice repositories |
 | `fleet` | Every Kubernetes Flux cluster repository |
 | `flux`  | Deprecated, being replaced by `fleet`. Don't use it in new repos |
@@ -21,6 +22,13 @@ Add a `.github/renovate.json` to your repository and extend the appropriate conf
 ```json
 {
   "extends": ["github>mailerlite/renovate-config:app"]
+}
+```
+
+**Service repo** (builds on `mailerlitehub/base-images`, released weekly):
+```json
+{
+  "extends": ["github>mailerlite/renovate-config:service"]
 }
 ```
 
@@ -119,6 +127,15 @@ For application and microservice repositories. Managers:
 Internal Docker images in Dockerfiles and compose files are **not** digest-pinned. External images are.
 
 Internal GHA patch and minor updates auto-merge. All other updates create a PR.
+
+### service
+
+Extends `app`. For SRE-run services and containers that build `FROM` our base images, including SRE-run repos that also have a skaffold dev flow (e.g. `robusta`, `tracking-ingress`, the mailersend `smtp-*` services). Not for the main applications.
+
+- Enables language managers as well as `app`'s: `gomod`, `npm`, `composer`, `pep621`, `pip_requirements`, `poetry`, `bundler`, `cargo`. Test and vendor directories are ignored (`:ignoreModulesAndTests`).
+- **Auto-merge:** only base image bumps (patch, minor, digest), on weekdays once checks pass: `europe-docker.pkg.dev/mailerlitehub/base-images/*` and the `mailerlitehub/containers/trixie-node-*` images built in `mailerlite/containers`. Every other update gets a PR.
+
+Weekly flow: `base-docker-images` rebuilds on Monday 01:00 UTC → Renovate opens base image PRs on Monday morning → they auto-merge → the service's `rebuild-weekly` on Tuesday tags a release that includes the new base → the cluster repos get the image bump (see `fleet`).
 
 ### fleet
 
