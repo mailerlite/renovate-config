@@ -212,7 +212,6 @@
             "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
             "matchFileNames": ["dev/workloads/**", "dev/core/**"],
             "addLabels": ["automerge"],
-            "automerge": true
         },
         {
             "description": [
@@ -227,8 +226,6 @@
             ],
             "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
             "matchFileNames": ["production/workloads/**", "production/core/**"],
-            "automerge": true,
-            "platformAutomerge": false,
             "addLabels": ["automerge"]
         },
         {
