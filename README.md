@@ -148,11 +148,11 @@ For Kubernetes Flux cluster repositories. Managers:
 | Update type | dev | production |
 |-------------|-----|------------|
 | Internal Docker patch / digest / pinDigest | Auto-merge when checks pass | Auto-merge when checks pass |
-| Internal Docker minor | Auto-merge when checks pass | One grouped PR per repo, merged by Renovate on its next weekday run |
+| Internal Docker minor | Auto-merge when checks pass | One PR per update, merged by Renovate on a later weekday run |
 | Internal Docker major | PR only | PR only |
 | External | PR only | PR only |
 
-Prod minor is created in the same run as dev minor and merged by Renovate itself (`platformAutomerge: false`) on its next weekday run, so it lands one Renovate run after dev: a Friday dev merge reaches production on Monday. The soak is the time between Renovate runs, not a fixed 24 hours. `minimumReleaseAge` is not used because GAR has no release timestamps.
+Prod minor is created in the same run as dev minor and merged by Renovate itself (`platformAutomerge: false`) on a later weekday run, so it lands at least one Renovate run after dev: a Friday dev merge reaches production on Monday at the earliest. Renovate merges at most one PR per repo per run, so several prod minors land one run apart. The soak is the time between Renovate runs, not a fixed 24 hours. `minimumReleaseAge` is not used because GAR has no release timestamps.
 
 Internal GHA patch and minor updates auto-merge on weekdays in the repos listed in `base.json`.
 

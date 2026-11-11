@@ -232,8 +232,8 @@
         },
         {
             "description": [
-                "production, internal images, minor - one grouped PR per repo, created in the same weekday run as the dev PR and merged by Renovate itself on its next weekday run, so prod lands one Renovate run after dev.",
-                "platformAutomerge is off on purpose: GitHub would merge as soon as checks pass. Renovate merges at most one PR per run, hence the group.",
+                "production, internal images, minor - one PR per update, created in the same weekday run as the dev PR and merged by Renovate itself on a later weekday run, so prod lands at least one Renovate run after dev.",
+                "platformAutomerge is off on purpose: GitHub would merge as soon as checks pass. Renovate merges at most one PR per repo per run, so several prod minors land one run apart.",
                 "No minimumReleaseAge: GAR has no release timestamps, so any age holds the update forever. The app-template chart is excluded."
             ],
             "matchDatasources": ["docker"],
@@ -243,8 +243,6 @@
             ],
             "matchUpdateTypes": ["minor"],
             "matchFileNames": ["production/workloads/**", "production/core/**"],
-            "groupName": "production internal minor",
-            "groupSlug": "internal-minor",
             "schedule": ["* * * * 1-5"],
             "automergeSchedule": ["* * * * 1-5"],
             "automerge": true,
