@@ -92,9 +92,8 @@
     "packageRules": [
         {
             "description": [
-                "Default off in fleet repos. This overrides the auto-merge rules inherited",
-                "from base, which stay in effect for every other repo.",
-                "The dev and production internal image rules further down opt back in."
+                "Default off in fleet repos, so nothing auto-merges unless a rule below opts back in.",
+                "The dev and production internal image rules further down are where that happens."
             ],
             "matchPackageNames": ["*"],
             "automerge": false
@@ -103,7 +102,7 @@
             "description": "Internal Docker images in a cluster repo - digest pin so deployments are deterministic (overrides the base default)",
             "matchDatasources": ["docker"],
             "matchPackageNames": [
-                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//"
+                "/docker\\.pkg\\.dev\\/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)\\//"
             ],
             "pinDigests": true
         },
@@ -136,9 +135,21 @@
         },
         {
             "description": "production environment - own branch prefix so it never shares a PR with dev",
-            "matchFileNames": ["production/**"],
+            "matchFileNames": ["production/**", "clusters/production/**"],
             "additionalBranchPrefix": "production-",
             "addLabels": ["production"]
+        },
+        {
+            "description": "staging environment (clusters-classic layout) - own branch prefix so it never shares a PR with production",
+            "matchFileNames": ["clusters/staging/**"],
+            "additionalBranchPrefix": "staging-",
+            "addLabels": ["staging"]
+        },
+        {
+            "description": "shared base layer (clusters-classic layout) - rolls out to staging and production at once",
+            "matchFileNames": ["base/**"],
+            "additionalBranchPrefix": "base-",
+            "addLabels": ["base"]
         },
         {
             "description": "core layer - rolls out to every cluster in the environment at once",
@@ -192,25 +203,25 @@
             "description": "app-template patch updates",
             "groupName": "app-template patch dependencies",
             "groupSlug": "app-template-patch",
-            "matchPackageNames": ["app-template", "/bjw-charts/app-template$/"],
+            "matchPackageNames": ["app-template", "/bjw-charts\\/app-template$/"],
             "matchUpdateTypes": ["patch"]
         },
         {
             "description": "app-template minor updates",
             "groupName": "app-template minor dependencies",
             "groupSlug": "app-template-minor",
-            "matchPackageNames": ["app-template", "/bjw-charts/app-template$/"],
+            "matchPackageNames": ["app-template", "/bjw-charts\\/app-template$/"],
             "matchUpdateTypes": ["minor"]
         },
         {
             "description": "dev, internal images - auto-merge patch, minor and digest rebuilds. The app-template chart is excluded, one bump changes every app-template workload at once.",
             "matchDatasources": ["docker"],
             "matchPackageNames": [
-                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//",
+                "/docker\\.pkg\\.dev\\/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)\\//",
                 "!europe-docker.pkg.dev/mailerlitehub/bjw-charts/**"
             ],
             "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
-            "matchFileNames": ["dev/workloads/**", "dev/core/**"],
+            "matchFileNames": ["dev/workloads/**", "dev/core/**", "clusters/staging/**"],
             "addLabels": ["automerge"]
         },
         {
@@ -221,12 +232,20 @@
             ],
             "matchDatasources": ["docker"],
             "matchPackageNames": [
-                "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//",
+                "/docker\\.pkg\\.dev\\/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)\\//",
                 "!europe-docker.pkg.dev/mailerlitehub/bjw-charts/**"
             ],
             "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
-            "matchFileNames": ["production/workloads/**", "production/core/**"],
+            "matchFileNames": ["production/workloads/**", "production/core/**", "clusters/production/**"],
             "addLabels": ["automerge"]
+        },
+        {
+            "description": "Packages that get PRs but must never auto-merge - add/remove package names here to manage the list",
+            "matchPackageNames": [
+                "europe-docker.pkg.dev/mailerlitehub/pgbouncer/pgbouncer"
+            ],
+            "automerge": false,
+            "removeLabels": ["automerge"]
         },
         {
             "description": "Explicitly disabled packages - add/remove package names here to manage the list",
