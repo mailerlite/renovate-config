@@ -211,7 +211,7 @@
             ],
             "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
             "matchFileNames": ["dev/workloads/**", "dev/core/**"],
-            "addLabels": ["automerge"],
+            "addLabels": ["automerge"]
         },
         {
             "description": [
