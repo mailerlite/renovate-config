@@ -51,7 +51,7 @@
         {
             "description": "Disable dockerfile manager for internal images - handled by custom regex manager",
             "matchManagers": ["dockerfile"],
-            "matchPackagePatterns": ["mailerlitehub"],
+            "matchPackageNames": ["/mailerlitehub/"],
             "enabled": false
         },
         {
@@ -68,7 +68,7 @@
         },
         {
             "description": "Elasticsearch - disable major updates",
-            "matchPackagePatterns": ["elasticsearch"],
+            "matchPackageNames": ["/elasticsearch/"],
             "matchUpdateTypes": ["major"],
             "enabled": false
         },
@@ -82,6 +82,26 @@
             "description": "GitHub releases - separate PRs per package",
             "matchDatasources": ["github-releases"],
             "reviewers": ["team:sre"]
+        },
+        {
+            "description": "Internal Docker patch/minor/digest - auto-merge on weekdays once checks pass. Opt a repo out with github>mailerlite/renovate-config:no-automerge.",
+            "matchDatasources": ["docker"],
+            "matchPackageNames": ["/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//"],
+            "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
+            "schedule": ["* * * * 1-5"],
+            "automergeSchedule": ["* * * * 1-5"],
+            "addLabels": ["automerge"],
+            "automerge": true
+        },
+        {
+            "description": "Internal GHA patch/minor - auto-merge on weekdays once checks pass. Opt a repo out with github>mailerlite/renovate-config:no-automerge.",
+            "matchManagers": ["github-actions"],
+            "matchPackageNames": ["/^(mailerlite|mailersend|mailercheck)//"],
+            "matchUpdateTypes": ["patch", "minor"],
+            "schedule": ["* * * * 1-5"],
+            "automergeSchedule": ["* * * * 1-5"],
+            "addLabels": ["automerge"],
+            "automerge": true
         }
     ]
 }
