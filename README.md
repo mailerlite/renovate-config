@@ -136,7 +136,13 @@ For every Kubernetes Flux cluster repository. Supports both layouts: `dev/` + `p
 
 **Digest pinning:** Internal Docker images in Flux cluster files **are** digest-pinned (unlike in app repos). This ensures cluster deployments are fully deterministic. The `flux` manager itself has digest pinning disabled because the inline `tag@digest` format is not valid in HelmRelease values — digest tracking is handled by the custom managers instead.
 
-**Auto-merge:** paused. Nothing in `fleet` repos auto-merges. The dev/staging and production internal image rules still add the `automerge` label, so the PRs show what would auto-merge once it is turned back on. `pgbouncer` never auto-merges.
+**Auto-merge:** PRs that auto-merge receive an `automerge` label. Only dev/staging auto-merges; production always gets a PR for a human to merge. The app-template chart is excluded and `pgbouncer` never auto-merges.
+
+| Update type | dev / staging | production |
+|-------------|---------------|------------|
+| Internal Docker patch / minor / digest | Auto-merge on weekdays once checks pass | PR only |
+| Internal Docker major | PR only | PR only |
+| External | PR only | PR only |
 
 ---
 
