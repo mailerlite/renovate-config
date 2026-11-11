@@ -65,7 +65,7 @@ Packages are classified as **internal** or **external** based on their origin.
 Internal packages:
 - No `minimumReleaseAge` — PRs are created immediately on release
 - No digest pinning (except internal Docker images in Flux cluster repos — see below)
-- Patch and minor updates auto-merge where applicable (see per-config sections below)
+- Patch and minor updates auto-merge on weekdays, only in the repos the presets list by name (see per-config sections below)
 - Major updates create a PR with no auto-merge
 
 ### External packages
@@ -125,7 +125,7 @@ For application and microservice repositories. Managers:
 
 Internal Docker images in Dockerfiles and compose files are **not** digest-pinned. External images are.
 
-Internal GHA patch and minor updates auto-merge. All other updates create a PR.
+Internal Docker patch, minor and digest updates and internal GHA patch and minor updates auto-merge on weekdays (UTC), but only in the repos listed in the `matchRepositories` of those two rules in `base.json` (containers and micros, not the main apps). Everywhere else they get a PR. To opt a repo in, add it to both lists. All other updates create a PR.
 
 ### flux
 
@@ -143,19 +143,18 @@ For Kubernetes Flux cluster repositories. Managers:
 
 **Digest pinning:** Internal Docker images in Flux cluster files **are** digest-pinned (unlike in app repos). This ensures cluster deployments are fully deterministic. The `flux` manager itself has digest pinning disabled because the inline `tag@digest` format is not valid in HelmRelease values — digest tracking is handled by the custom managers instead.
 
-**Auto-merge:** PRs that auto-merge receive an `automerge` label. In `fleet` repos dev internal Docker images auto-merge as soon as checks pass. Prod internal Docker updates (patch, minor, digest) go into one grouped PR per repo that Renovate merges itself on a later daily run, so prod lands ~1-2 days after dev. `minimumReleaseAge` is not used there because GAR has no release timestamps. The app-template chart is excluded in both environments.
+**Auto-merge:** PRs that auto-merge receive an `automerge` label. Only `fleet` repos auto-merge; the `flux` preset only labels. Everything that auto-merges is created and merged on weekdays only (UTC). The app-template chart is excluded in both environments.
 
-| Update type | dev / staging | prod |
-|-------------|--------------|------|
-| Internal Docker patch | Auto-merge (CI required) | Auto-merge (CI required) |
-| Internal Docker minor | Auto-merge (CI required) | Auto-merge, 1 day buffer (CI required) |
-| Internal Docker pinDigest | Auto-merge (CI required) | Auto-merge (CI required) |
+| Update type | dev | production |
+|-------------|-----|------------|
+| Internal Docker patch / digest / pinDigest | Auto-merge when checks pass | Auto-merge when checks pass |
+| Internal Docker minor | Auto-merge when checks pass | One grouped PR per repo, merged by Renovate on its next weekday run |
 | Internal Docker major | PR only | PR only |
 | External | PR only | PR only |
 
-The 1-day buffer on prod minor means by the time the PR is created, the change has already been running in dev/staging for at least a day via webhook — it acts as a natural soak gate.
+Prod minor is created in the same run as dev minor and merged by Renovate itself (`platformAutomerge: false`) on its next weekday run, so it lands one Renovate run after dev: a Friday dev merge reaches production on Monday. The soak is the time between Renovate runs, not a fixed 24 hours. `minimumReleaseAge` is not used because GAR has no release timestamps.
 
-Internal GHA patch and minor updates auto-merge across all repos (including Flux).
+Internal GHA patch and minor updates auto-merge on weekdays in the repos listed in `base.json`.
 
 ---
 

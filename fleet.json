@@ -203,7 +203,7 @@
             "matchUpdateTypes": ["minor"]
         },
         {
-            "description": "dev, internal images - auto-merge patch, minor and digest rebuilds. The app-template chart is excluded, one bump changes every app-template workload at once.",
+            "description": "dev, internal images - auto-merge patch, minor and digest rebuilds on weekdays, as soon as checks pass. The app-template chart is excluded, one bump changes every app-template workload at once.",
             "matchDatasources": ["docker"],
             "matchPackageNames": [
                 "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//",
@@ -211,22 +211,28 @@
             ],
             "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
             "matchFileNames": ["dev/workloads/**", "dev/core/**"],
+            "schedule": ["* * * * 1-5"],
+            "automergeSchedule": ["* * * * 1-5"],
             "addLabels": ["automerge"],
             "automerge": true
         },
         {
-            "description": "production, internal images - keep patch and minor in the same group PR (overrides separateMinorPatch above). Separate rule because separateMinorPatch cannot be combined with matchUpdateTypes.",
+            "description": "production, internal images - auto-merge patch and digest rebuilds on weekdays, as soon as checks pass. The app-template chart is excluded.",
             "matchDatasources": ["docker"],
             "matchPackageNames": [
                 "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//",
                 "!europe-docker.pkg.dev/mailerlitehub/bjw-charts/**"
             ],
+            "matchUpdateTypes": ["patch", "digest", "pinDigest"],
             "matchFileNames": ["production/workloads/**", "production/core/**"],
-            "separateMinorPatch": false
+            "schedule": ["* * * * 1-5"],
+            "automergeSchedule": ["* * * * 1-5"],
+            "addLabels": ["automerge"],
+            "automerge": true
         },
         {
             "description": [
-                "production, internal images - one grouped PR per repo, merged by Renovate itself on a later daily run, so prod lands ~1-2 days after dev.",
+                "production, internal images, minor - one grouped PR per repo, created in the same weekday run as the dev PR and merged by Renovate itself on its next weekday run, so prod lands one Renovate run after dev.",
                 "platformAutomerge is off on purpose: GitHub would merge as soon as checks pass. Renovate merges at most one PR per run, hence the group.",
                 "No minimumReleaseAge: GAR has no release timestamps, so any age holds the update forever. The app-template chart is excluded."
             ],
@@ -235,10 +241,12 @@
                 "/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//",
                 "!europe-docker.pkg.dev/mailerlitehub/bjw-charts/**"
             ],
-            "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
+            "matchUpdateTypes": ["minor"],
             "matchFileNames": ["production/workloads/**", "production/core/**"],
-            "groupName": "production internal images",
-            "groupSlug": "internal-images",
+            "groupName": "production internal minor",
+            "groupSlug": "internal-minor",
+            "schedule": ["* * * * 1-5"],
+            "automergeSchedule": ["* * * * 1-5"],
             "automerge": true,
             "platformAutomerge": false,
             "addLabels": ["automerge"]
