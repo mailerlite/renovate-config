@@ -77,13 +77,35 @@
             "description": "images.yaml - one PR per package across all its tracked version slots",
             "matchFileNames": ["**/images.yaml"],
             "groupName": "{{depName}}"
+        },
+        {
+            "description": "Go modules - off; gomod is enabled only for the go directive rule below",
+            "matchManagers": ["gomod"],
+            "enabled": false
+        },
+        {
+            "description": "go directive in go.mod - keep it at the latest Go patch. PR Trivy scans read Go stdlib from this line; GOTOOLCHAIN=auto in the go base image builds with it",
+            "matchManagers": ["gomod"],
+            "matchDepTypes": ["golang"],
+            "matchDepNames": ["go"],
+            "rangeStrategy": "bump",
+            "enabled": true
+        },
+        {
+            "description": "go directive - patch only; a new Go minor goes together with the go base image tag (-1.27 -> -1.28)",
+            "matchManagers": ["gomod"],
+            "matchDepTypes": ["golang"],
+            "matchDepNames": ["go"],
+            "matchUpdateTypes": ["minor", "major"],
+            "enabled": false
         }
     ],
     "enabledManagers": [
         "custom.regex",
         "dockerfile",
         "docker-compose",
-        "github-actions"
+        "github-actions",
+        "gomod"
     ],
     "dockerfile": {
         "managerFilePatterns": [
