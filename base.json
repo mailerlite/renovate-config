@@ -23,19 +23,19 @@
         {
             "description": "mailerlite/workflows and mailerlite/base-docker-images reusable workflows - pinned at main, no versioning",
             "matchManagers": ["github-actions"],
-            "matchPackageNames": ["/mailerlite/workflows/", "/mailerlite/base-docker-images/"],
+            "matchPackageNames": ["/mailerlite\\/workflows/", "/mailerlite\\/base-docker-images/"],
             "enabled": false,
             "pinDigests": false
         },
         {
             "description": "mailerlite-v2 GCP registry - explicit registryUrl required for Renovate to query it correctly",
-            "matchPackageNames": ["/^europe-docker.pkg.dev/mailerlite-v2//"],
+            "matchPackageNames": ["/^europe-docker.pkg.dev\\/mailerlite-v2\\//"],
             "matchDatasources": ["docker"],
             "registryUrls": ["https://europe-docker.pkg.dev/mailerlite-v2/"]
         },
         {
             "description": "Internal Docker images from GCP artifact registry - no minimum release age, no digest pinning by default",
-            "matchPackageNames": ["/docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)//"],
+            "matchPackageNames": ["/docker\\.pkg\\.dev\\/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)\\//"],
             "matchDatasources": ["docker"],
             "minimumReleaseAge": "0 days",
             "pinDigests": false
@@ -43,7 +43,7 @@
         {
             "description": "Internal GitHub Actions - no minimum release age, no digest pinning",
             "matchManagers": ["github-actions"],
-            "matchPackageNames": ["/^(mailerlite|mailersend|mailercheck)//"],
+            "matchPackageNames": ["/^(mailerlite|mailersend|mailercheck)\\//"],
             "minimumReleaseAge": "0 days",
             "pinDigests": false
         },
