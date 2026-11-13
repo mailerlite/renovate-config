@@ -267,6 +267,15 @@ Use when the full image reference (including tag) appears on a single line.
 image: europe-docker.pkg.dev/mailerlitehub/myapp/myapp:2.0.1@sha256:abc123...
 ```
 
+### Terraform — image attribute
+
+Use for container images set in Terraform, e.g. a Cloud Run service. Repos that restrict `enabledManagers` must include `custom.regex`.
+
+```hcl
+# renovate: datasource=docker depName=europe-docker.pkg.dev/mailerlitehub/containers/myapp
+image = "europe-docker.pkg.dev/mailerlitehub/containers/myapp:v1.2.3"
+```
+
 ### Pre-commit hooks
 
 ```yaml
