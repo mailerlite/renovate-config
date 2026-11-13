@@ -48,20 +48,6 @@
             "pinDigests": false
         },
         {
-            "description": "Internal Docker patch/minor - auto-merge across all repos",
-            "matchPackagePatterns": ["docker\\.pkg\\.dev/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)/"],
-            "matchDatasources": ["docker"],
-            "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
-            "addLabels": ["automerge"]
-        },
-        {
-            "description": "Internal GHA patch/minor - auto-merge across all repos",
-            "matchManagers": ["github-actions"],
-            "matchPackagePatterns": ["^(mailerlite|mailersend|mailercheck)/"],
-            "matchUpdateTypes": ["patch", "minor"],
-            "addLabels": ["automerge"]
-        },
-        {
             "description": "Group digest-only pins into a single PR - no version changes",
             "matchManagers": ["dockerfile", "docker-compose"],
             "matchUpdateTypes": ["pinDigest"],
