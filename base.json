@@ -115,7 +115,7 @@
             "description": "Terraform image attribute annotated with a # renovate: comment, e.g. Cloud Run containers",
             "managerFilePatterns": ["/\\.tf$/"],
             "matchStrings": [
-                "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)\\s*\\n\\s*image\\s*=\\s*\"[^\"]+:(?<currentValue>[^\"@]+)\""
+                "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)\\s*\\n\\s*image\\s*=\\s*\"[^\"@]+:(?<currentValue>[^\"@]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?\""
             ]
         }
     ]
