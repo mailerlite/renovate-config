@@ -232,6 +232,24 @@
             "automerge": true
         },
         {
+            "description": [
+                "clusters-hub (production, single cluster under cluster/) - the one production cluster whose internal images auto-merge.",
+                "Same update types and weekday window as the dev/staging rule above."
+            ],
+            "matchRepositories": ["mailerlite/clusters-hub"],
+            "matchDatasources": ["docker"],
+            "matchPackageNames": [
+                "/docker\\.pkg\\.dev\\/(mailerlitehub|mailerlite-gcp|mailercheck-usa|mailersend-214215|mailerlite-v2)\\//",
+                "!europe-docker.pkg.dev/mailerlitehub/bjw-charts/**"
+            ],
+            "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
+            "matchFileNames": ["cluster/**"],
+            "schedule": ["* * * * 1-5"],
+            "automergeSchedule": ["* * * * 1-5"],
+            "addLabels": ["automerge"],
+            "automerge": true
+        },
+        {
             "description": "Packages that get PRs but must never auto-merge - add/remove package names here to manage the list",
             "matchPackageNames": [
                 "europe-docker.pkg.dev/mailerlitehub/pgbouncer/pgbouncer"
