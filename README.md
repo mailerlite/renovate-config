@@ -7,10 +7,11 @@ Shared [Renovate](https://docs.renovatebot.com/) configurations for MailerLite r
 | Config | Purpose |
 |--------|---------|
 | `base` | Common defaults inherited by all configs |
+| `app`  | Application/microservice repositories. Never auto-merges |
 | `service` | SRE-run services and containers that build on our base images: auto-merges base image bumps |
-| `app`  | Application/microservice repositories |
-| `fleet` | Every Kubernetes Flux cluster repository |
-| `flux`  | Deprecated, being replaced by `fleet`. Don't use it in new repos |
+| `fleet` | Every Kubernetes Flux cluster repository: auto-merges internal images in dev/staging and on `clusters-hub` |
+| `no-automerge` | Add after `app`, `service` or `fleet` to opt a repo out of all auto-merge |
+| `flux`  | Deprecated, no repo uses it. Don't use it in new repos |
 
 ---
 
@@ -46,6 +47,50 @@ Add a `.github/renovate.json` to your repository and extend the appropriate conf
 }
 ```
 
+**Opt out of auto-merge** (main applications, or any repo where a person must merge every update):
+```json
+{
+  "extends": ["github>mailerlite/renovate-config:app", "github>mailerlite/renovate-config:no-automerge"]
+}
+```
+
+---
+
+## How Renovate runs
+
+Renovate runs in `mailerlite/clusters-hub` on [renovate-operator](https://github.com/mogenius/renovate-operator), one `RenovateJob` per org under `cluster/releases/renovate/`. A run is started in two ways:
+
+- **Schedule:** weekdays only. mailerlite 03:00, mailersend 04:00, mailercheck 05:00 UTC.
+- **Webhook:** a service's `build.yml` calls `mailerlite/workflows/.github/workflows/renovate.yaml` after it pushes a new image. That starts a run on the cluster repos straight away, so they get the image bump the same day instead of the next weekday morning. Repos without this job wait for the schedule.
+
+A run still follows each rule's `schedule`, so a weekend tag gets its PR on Monday.
+
+### Auto-merge
+
+The `automerge` label means the PR merges itself. A rule that sets the label without `automerge: true` is a bug.
+
+How a PR with `automerge: true` gets merged:
+
+1. Renovate turns on GitHub auto-merge for the PR. GitHub merges it as soon as the required checks pass. This needs **Settings → General → Allow auto-merge** on the repo.
+2. If that setting is off, Renovate merges the PR itself on its next run, once every check is green. So the setting decides how fast a PR merges, not whether it merges.
+
+The required check is `Kritika / Review`, from the org ruleset **AutoMerge Kritika** (one per org, default branch only). A repo that auto-merges must be in that ruleset, or a PR can merge before Kritika reviews it. People with the Write, Maintain or Admin role bypass the ruleset, so it does not change how they push or merge. Renovate and other GitHub Apps can't bypass it.
+
+To turn auto-merge on for a repo: extend `service` or `fleet`, add the repo to the org's AutoMerge Kritika ruleset, and turn on Allow auto-merge.
+
+### Weekly flow
+
+```
+Mon 01:00  base-docker-images rebuild-weekly     patch release of every base image
+Mon 03:00  Renovate (schedule), service repos    base image PR → Kritika → auto-merge   [service]
+Tue        service rebuild-weekly                patch release tag, now on the new base
+           service build.yml                     image pushed to mailerlitehub/containers, webhook
+           Renovate (webhook), cluster repos     dev PR → Kritika → auto-merge          [fleet]
+                                                 production PR → a person merges it
+```
+
+Production is manual everywhere except `clusters-hub`, and except images that a cluster repo opts in with its own rule (e.g. `mailerlite-mcp` in `mailerlite/clusters-fleet`).
+
 ---
 
 ## Package policy
@@ -66,7 +111,7 @@ Packages are classified as **internal** or **external** based on their origin.
 Internal packages:
 - No `minimumReleaseAge` — PRs are created immediately on release
 - No digest pinning (except internal Docker images in Flux cluster repos — see below)
-- Patch and minor updates auto-merge where applicable (see per-config sections below)
+- Patch, minor and digest updates auto-merge only where a config says so (`service` base images, `fleet` dev/staging and `clusters-hub`)
 - Major updates create a PR with no auto-merge
 
 ### External packages
@@ -110,7 +155,7 @@ Applied to all configs. Sets organisation-wide defaults:
 
 **Managers enabled by default:** `dockerfile`, `docker-compose`, `github-actions`, `custom.regex`
 
-Repos extending `base` directly get these managers. Repos extending `app` or `flux` override this list with their own.
+Repos extending `base` directly get these managers. Repos extending `app`, `service` or `fleet` override this list with their own.
 
 ### app
 
@@ -126,7 +171,7 @@ For application and microservice repositories. Managers:
 
 Internal Docker images in Dockerfiles and compose files are **not** digest-pinned. External images are.
 
-Internal GHA patch and minor updates auto-merge. All other updates create a PR.
+Nothing auto-merges. Every update creates a PR.
 
 ### service
 
@@ -135,11 +180,11 @@ Extends `app`. For SRE-run services and containers that build `FROM` our base im
 - Enables language managers as well as `app`'s: `gomod`, `npm`, `composer`, `pep621`, `pip_requirements`, `poetry`, `bundler`, `cargo`. Test and vendor directories are ignored (`:ignoreModulesAndTests`).
 - **Auto-merge:** only base image bumps (patch, minor, digest), on weekdays once checks pass: `europe-docker.pkg.dev/mailerlitehub/base-images/*` and the `mailerlitehub/containers/trixie-node-*` images built in `mailerlite/containers`. Every other update gets a PR.
 
-Weekly flow: `base-docker-images` rebuilds on Monday 01:00 UTC → Renovate opens base image PRs on Monday morning → they auto-merge → the service's `rebuild-weekly` on Tuesday tags a release that includes the new base → the cluster repos get the image bump (see `fleet`).
+This is the first half of the [weekly flow](#weekly-flow).
 
 ### fleet
 
-For every Kubernetes Flux cluster repository. Supports both layouts: `dev/` + `production/` (the `clusters-fleet` repos) and `clusters/staging/` + `clusters/production/` + `base/` (`clusters-classic`). `clusters-hub` (`cluster/`) has no environment. `flux` is the old preset for the second layout and is being removed. Managers:
+For every Kubernetes Flux cluster repository. Supports both layouts: `dev/` + `production/` (the `clusters-fleet` repos) and `clusters/staging/` + `clusters/production/` + `base/` (`clusters-classic`). `clusters-hub` (`cluster/`) is a single production cluster with no environment folders. Managers:
 
 | Manager | What it tracks |
 |---------|---------------|
@@ -153,13 +198,15 @@ For every Kubernetes Flux cluster repository. Supports both layouts: `dev/` + `p
 
 **Digest pinning:** Internal Docker images in Flux cluster files **are** digest-pinned (unlike in app repos). This ensures cluster deployments are fully deterministic. The `flux` manager itself has digest pinning disabled because the inline `tag@digest` format is not valid in HelmRelease values — digest tracking is handled by the custom managers instead.
 
-**Auto-merge:** PRs that auto-merge receive an `automerge` label. Only dev/staging auto-merges; production always gets a PR for a human to merge. The app-template chart is excluded and `pgbouncer` never auto-merges.
+**Auto-merge:** dev/staging and `clusters-hub` auto-merge internal images; every other production cluster gets a PR for a person to merge. The app-template chart is excluded and `pgbouncer` never auto-merges.
 
-| Update type | dev / staging | production |
-|-------------|---------------|------------|
-| Internal Docker patch / minor / digest | Auto-merge on weekdays once checks pass | PR only |
-| Internal Docker major | PR only | PR only |
-| External | PR only | PR only |
+| Update type | dev / staging | `clusters-hub` | other production |
+|-------------|---------------|----------------|------------------|
+| Internal Docker patch / minor / digest | Auto-merge on weekdays once checks pass | Auto-merge on weekdays once checks pass | PR only |
+| Internal Docker major | PR only | PR only | PR only |
+| External | PR only | PR only | PR only |
+
+A cluster repo can opt one image in to production auto-merge with a rule in its own config. `mailerlite/clusters-fleet` does this for `mailerlite-mcp`, whose team controls production by cutting release tags.
 
 ---
 
