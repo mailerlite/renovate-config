@@ -99,6 +99,11 @@
             "automerge": false
         },
         {
+            "description": "OCI registries (ghcr.io, quay.io, registry.k8s.io...) publish no release timestamp - treat those as stable instead of pending forever",
+            "matchDatasources": ["docker"],
+            "minimumReleaseAgeBehaviour": "timestamp-optional"
+        },
+        {
             "description": "Internal Docker images in a cluster repo - digest pin so deployments are deterministic (overrides the base default)",
             "matchDatasources": ["docker"],
             "matchPackageNames": [
